@@ -1,0 +1,137 @@
+Index: src/PrescriberGUI.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/PrescriberGUI.java b/src/PrescriberGUI.java
+new file mode 100644
+--- /dev/null	(date 1714595836498)
++++ b/src/PrescriberGUI.java	(date 1714595836498)
+@@ -0,0 +1,127 @@
++import javax.swing.*;
++import javax.swing.border.Border;
++import java.awt.*;
++import java.awt.event.ActionEvent;
++import java.awt.event.ActionListener;
++
++public class PrescriberGUI {
++    JFrame myFrame = new JFrame();
++
++    JButton prescribeButton = new JButton("Prescribe");
++    JButton addFieldButton = new JButton("Add Field");
++
++    JLabel label1 = new JLabel("Name of Medication");
++    JLabel label2 = new JLabel("Strength of Medication");
++    JLabel label3 = new JLabel("Dosage Form");
++    JLabel label4 = new JLabel("Dose");
++
++    JTextField nameOfMedication = new JTextField(20);
++    JTextField strengthOfMedication = new JTextField(20);
++    JTextField dosageForm = new JTextField(20);
++    JTextField dose = new JTextField(10);
++
++    MyListener myListener = new MyListener(nameOfMedication,strengthOfMedication,dosageForm,dose);
++
++    JPanel mainPanel = new JPanel(new GridBagLayout());
++
++    GroupLayout groupLayout = new GroupLayout(mainPanel);
++    Border labelBorder = BorderFactory.createLineBorder(Color.blue,6,true);
++    Border menuBorder = BorderFactory.createLineBorder(Color.CYAN,2,true);
++
++    private void setFields(){
++        this.label1.setBounds(20, 30, 900, 100);
++        this.label1.setBorder(labelBorder);
++        this.label2.setBorder(labelBorder);
++        this.label3.setBorder(labelBorder);
++        this.label4.setBorder(labelBorder);
++    }
++
++    private void fieldGenerator(){
++        JTextField nameOfMedication1 = new JTextField(20);
++        JTextField strengthOfMedication1 = new JTextField(20);
++        JTextField dosageForm1 = new JTextField(20);
++        JTextField dose1 = new JTextField(10);
++
++        mainPanel.setLayout(groupLayout);
++
++        groupLayout.setAutoCreateGaps(true);
++        groupLayout.setAutoCreateContainerGaps(true);
++        groupLayout.setHorizontalGroup(
++                groupLayout.createSequentialGroup()
++                        .addComponent(label1).addComponent(nameOfMedication1)
++                        .addComponent(label2).addComponent(strengthOfMedication1)
++                        .addComponent(label3).addComponent(dosageForm1)
++                        .addComponent(label4).addComponent(dose1)
++        );
++        groupLayout.setVerticalGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
++                .addComponent(label1).addComponent(nameOfMedication1)
++                .addComponent(label2).addComponent(strengthOfMedication1)
++                .addComponent(label3).addComponent(dosageForm1)
++                .addComponent(label4).addComponent(dose1)
++        );
++//        mainPanel.setBackground(new Color(125, 198, 216));
++        myFrame.add(prescribeButton);
++        myFrame.add(addFieldButton);
++        myFrame.add(mainPanel);
++
++    }
++     public class MyListener implements ActionListener {
++        JTextField name, strength,dosageForm, dose;
++
++        @Override
++        public void actionPerformed(ActionEvent e){
++            if (e.getSource() == prescribeButton){
++                System.out.printf("Name: %s   Strength: %s   Form: %s   dose: %s ", name.getText(), strength.getText(),dosageForm.getText(),dose.getText());
++            } else if (e.getSource() == addFieldButton) {
++                fieldGenerator();
++
++            }
++        }
++
++        public MyListener(JTextField name, JTextField strength, JTextField dosageForm, JTextField dose){
++            this.name = name;
++            this.strength = strength;
++            this.dosageForm = dosageForm;
++            this.dose = dose;
++        }
++        public MyListener(){
++            this(null,null,null,null);
++        }
++    }
++    public static void main(String[] args) {
++        PrescriberGUI myPrescriber = new PrescriberGUI();
++        JLabel titleLabel =new JLabel("Fill the text fields properly to order medications appropriately");
++
++        JMenu menuItem1 = new JMenu("menu1");
++        JMenu menuItem2 = new JMenu("menu2");
++        JMenuBar menu= new JMenuBar();
++        myPrescriber.setFields();
++        menu.setLayout(new BoxLayout(menu, BoxLayout.X_AXIS));
++        menu.add(menuItem1);
++        menu.add(Box.createHorizontalStrut(5));
++        menu.add(menuItem2);
++        menu.setBorderPainted(true);
++        menu.setAlignmentY(20);
++        menu.setAlignmentX(30);
++        menu.setBackground(new Color(100,175,160));
++//        menuItem1.setBackground(new Color(0,100,0));
++//        menuItem1.setBorder(this.menuBorder);
++//        menuItem2.setBorder(menuBorder);
++
++
++        FlowLayout layout = new FlowLayout(FlowLayout.LEADING);
++
++        myPrescriber.myFrame.setTitle("Prescription Tab");
++        myPrescriber.myFrame.setSize(new Dimension(8000,7000));
++        myPrescriber.myFrame.setMinimumSize(new Dimension(500,500));
++        myPrescriber.myFrame.setLayout(layout);
++        myPrescriber.myFrame.add(titleLabel);
++        myPrescriber.myFrame.setJMenuBar(menu);
++        myPrescriber.fieldGenerator();
++        myPrescriber.prescribeButton.addActionListener(myPrescriber.myListener);
++        myPrescriber.addFieldButton.addActionListener(myPrescriber.myListener);
++        myPrescriber.myFrame.pack();
++        myPrescriber.myFrame.setVisible(true);
++        myPrescriber.myFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
++    }
++}
