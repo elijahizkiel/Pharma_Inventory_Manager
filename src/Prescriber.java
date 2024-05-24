@@ -66,9 +66,9 @@ public class Prescriber implements DataBaseModifierAndAccessor{
         ResultSet result = null;
         try {
             this.connect();
-            PreparedStatement selectTableQuery = connection.prepareStatement("SELECT prescriptionNumber, nameOfMedication, strength, dosageForm, amount FROM PrescriptionsRecords");
+            Statement selectTableQuery = connection.createStatement();
 
-            result = selectTableQuery.executeQuery();
+            result = selectTableQuery.executeQuery("SELECT prescriptionNumber, nameOfMedication, strength, dosageForm, amount FROM PrescriptionsRecords");
         } catch (SQLException e) {
             System.out.println("can't get info from Prescription table " + e.getMessage());
         }

@@ -34,17 +34,16 @@ public class Reporter implements DataBaseModifierAndAccessor {
             document.open();
 
             PdfPTable table = new PdfPTable(5);
-            ResultSet resultSet = getInfoFromTable(nameOfTable);
-           try{ while( resultSet.next()){
+            ResultSet resultSet = this.getInfoFromTable(nameOfTable);
+
+           try{
+               while( resultSet.next()){
                 for(int i = 0; i < 5; ++i ){
                     table.addCell(new PdfPCell(new Paragraph(resultSet.getString(i + 1))));
                 }
-
                 document.add(table);
-
                System.out.println("data successfully added to the pdf");
-
-            }
+               }
            }catch(SQLException e){
                System.out.println("can't access data from table " + e.getMessage() );
            }
@@ -93,7 +92,7 @@ public class Reporter implements DataBaseModifierAndAccessor {
         return null;
     }
 
-    public static ResultSet getInfoFromTable(String nameOfTable){
+    public ResultSet getInfoFromTable(String nameOfTable){
          ResultSet result = null;
          if(Objects.equals(nameOfTable,"Prescribe")){
              Prescriber prescriber = new Prescriber();

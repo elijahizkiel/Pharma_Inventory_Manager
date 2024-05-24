@@ -11,6 +11,7 @@ public class Prescription extends Medication {
     private final int frequency;
     private final int duration;
     private final String prescriptionNumber;
+    private boolean isDispensed = false;
     Prescriber prescriber = new Prescriber();
 
 
@@ -51,6 +52,10 @@ public class Prescription extends Medication {
 
     public String getPrescriptionNumber() {
         return prescriptionNumber;
+    }
+
+    public void setDispensed(boolean dispensed) {
+        isDispensed = dispensed;
     }
 
     @Override

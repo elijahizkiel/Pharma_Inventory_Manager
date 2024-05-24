@@ -50,7 +50,9 @@ public class DataBaseModifierAndAccessorTest {
 
         Reporter reporter = new Reporter("jdbc:sqlite:..DBMAtrial.db");
 
-        reporter.pdfGenerator("DBMA","PrescriptionsRecords");
+        reporter.pdfGenerator("DBMAPrescribed","Prescribe");
+        reporter.pdfGenerator("DBMADispensed","Dispense");
+
 
         ResultSet dispenseCount = reporter.showDispensed();
        try{
