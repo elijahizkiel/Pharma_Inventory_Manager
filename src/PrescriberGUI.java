@@ -13,7 +13,7 @@ public class PrescriberGUI {
     private static JButton prescribeButton;
     private static ButtonClickListener buttonClickListener = new ButtonClickListener();
     private static ArrayList<Panel> numOfPanels = new ArrayList<>();
-    static DataBaseModifierAndAccessor mod = new DataBaseModifierAndAccessor("jdbc:sqlite:..INVENTORY_DB.db");
+    static Prescriber mod = new Prescriber("jdbc:sqlite:..INVENTORY_DB.db");
     Border border = BorderFactory.createLineBorder( new Color(120,120,120),1,true);
 
     private static void addPanel(){

@@ -5,7 +5,8 @@ import java.util.ArrayList;
 
 public class DataBaseModifierAndAccessorTest {
     public static void main(String[] args) {
-        DataBaseModifierAndAccessor DBMA = new DataBaseModifierAndAccessor("jdbc:sqlite:..DBMAtrial.db");
+        Prescriber DBMA = new Prescriber("jdbc:sqlite:..DBMAtrial.db");
+        Dispenser DBMA2 = new Dispenser("jdbc:sqlite:..DBMAtrial.db");
 
         Prescription p1 = new Prescription("paracetamol", 500,"Suspension", "BID", 2,7);
         Prescription p2 = new Prescription("paracetamol", 250,"Suspension", "BID", 2,7);
@@ -19,11 +20,11 @@ public class DataBaseModifierAndAccessorTest {
         prescriptions.add(p4);
 
         DBMA.prescribe(prescriptions);
-        DBMA.dispense(prescriptions);
+        DBMA2.dispense(prescriptions);
 
         System.out.println("******************************\n Prescribed Medications\n*********************");
 
-        ResultSet resultSet1 = DBMA.getInfoFromTable("PrescriptionsRecords");
+        ResultSet resultSet1 = DBMA.getInfoFromTable();
         System.out.printf("%20s   %20s  %8s  %15s   %10s %n","PrescriptionNumber", "Name Of Medication", "Strength", "DosageForm", "Amount");
         try{while(resultSet1.next()){
              System.out.printf("%20s   %20s  %8d  %15s   %10d %n", resultSet1.getString(1),
@@ -36,7 +37,7 @@ public class DataBaseModifierAndAccessorTest {
 
         System.out.println("*********************************\n Dispensed Medications \n******************");
 
-        ResultSet resultSet2 = DBMA.getInfoFromTable("DispenseRecords");
+        ResultSet resultSet2 = DBMA2.getInfoFromTable();
         System.out.printf("%20s   %20s  %8s  %15s   %n","PrescriptionNumber", "Name Of Medication", "Strength", "DosageForm");
         try{while(resultSet2.next()){
             System.out.printf("%20s   %20s  %8d  %15s  %n", resultSet2.getString(1),

@@ -30,4 +30,7 @@ public abstract class Medication {
         return strength;
     }
 
+    public Date getExpireDate() {
+        return expireDate;
+    }
 }

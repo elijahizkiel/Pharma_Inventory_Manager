@@ -11,7 +11,7 @@ public class Prescription extends Medication {
     private final int frequency;
     private final int duration;
     private final String prescriptionNumber;
-    DataBaseModifierAndAccessor dataBaseModifierAndAccessor = new DataBaseModifierAndAccessor("jdbc:sqlite:..INVENTORY_DB.db");
+    Prescriber prescriber = new Prescriber();
 
 
     public Prescription(String nameOfMedication, int strength,String dosageForm,String dose,int frequency, int duration ){
@@ -46,7 +46,7 @@ public class Prescription extends Medication {
     }
 
     boolean verifyPrescription(){
-        return dataBaseModifierAndAccessor.isInInventory(this.getNameOfMedication(), this.getStrength(), this.getDosageForm());
+        return prescriber.isInStock(this.getNameOfMedication(), this.getStrength(), this.getDosageForm());
     }
 
     public String getPrescriptionNumber() {

@@ -4,25 +4,28 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import org.jetbrains.annotations.*;
 
 import java.io.*;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.Objects;
 
 //Gives information or reports information about medications in stock and how much is purchased
 // how many is dispensed and how many is disposed  due to expire date
 //generates pdf report
 //Generates analytical data on how many medications are dispensed and how many are disposed
 
-public class Reporter extends DataBaseModifierAndAccessor {
+public class Reporter implements DataBaseModifierAndAccessor {
 
-    public Reporter(String location){
-        super(location);
-
+    Connection connect = null;
+    String location ="jdbc:sqlite:.InventoryManager.db";
+    Reporter(){}
+    Reporter(String location){
+        this.location = location;
     }
     //uses iText to create pdf report
     //creates pdf with table to represent the DB table
+
      void pdfGenerator(String name, String nameOfTable){
         Document document = new Document();
         String fileName = name +".pdf";
@@ -31,7 +34,7 @@ public class Reporter extends DataBaseModifierAndAccessor {
             document.open();
 
             PdfPTable table = new PdfPTable(5);
-            ResultSet resultSet = super.getInfoFromTable(nameOfTable);
+            ResultSet resultSet = getInfoFromTable(nameOfTable);
            try{ while( resultSet.next()){
                 for(int i = 0; i < 5; ++i ){
                     table.addCell(new PdfPCell(new Paragraph(resultSet.getString(i + 1))));
@@ -61,7 +64,6 @@ public class Reporter extends DataBaseModifierAndAccessor {
         * returns paired set of prescribed items and count  */
         ResultSet countOfMedications = null;
         try {
-            super.connect();
             Statement queryStatement = this.connect.createStatement();
             countOfMedications = queryStatement.executeQuery("SELECT nameOfMedication,dosageForm,strength, COUNT(*) FROM DispenseRecords GROUP BY nameOfMedication, dosageForm, strength");
         }catch (SQLException e){
@@ -69,6 +71,41 @@ public class Reporter extends DataBaseModifierAndAccessor {
         }
 
         return countOfMedications;
+    }
+
+    @Override
+    public void connect() {
+         try{
+             connect = DriverManager.getConnection(location);
+         } catch (SQLException e){
+             System.out.println("can't connect from reporter " + e.getMessage());
+         }
+    }
+
+    @Override
+    public void createTable(){}
+
+    @Override
+    public void insertCommand(@NotNull Medication medication) {}
+
+    @Override
+    public ResultSet getInfoFromTable() {
+        return null;
+    }
+
+    public static ResultSet getInfoFromTable(String nameOfTable){
+         ResultSet result = null;
+         if(Objects.equals(nameOfTable,"Prescribe")){
+             Prescriber prescriber = new Prescriber();
+             result = prescriber.getInfoFromTable();
+         } else if (Objects.equals(nameOfTable, "Dispense")) {
+             Dispenser dispenser = new Dispenser();
+             result = dispenser.getInfoFromTable();
+         } else if (Objects.equals(nameOfTable, "MedicationInStock")) {
+             Registerer registerer = new Registerer();
+             result = registerer.getInfoFromTable();
+         }
+        return result;
     }
 
 

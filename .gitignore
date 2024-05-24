@@ -2,7 +2,8 @@
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
-
+...DBMAtrial.db
+.DBMA.pdf
 ### Eclipse ###
 .apt_generated
 .classpath
@@ -27,3 +28,5 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+..DBMAtrial.db
+.DBMA.pdf

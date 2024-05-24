@@ -10,7 +10,26 @@ public class NewlyPurchasedDrug extends Medication{
 
     public NewlyPurchasedDrug(String nameOfMedication, int strength, String dosageForm, Date expireDate){
         super( nameOfMedication, strength, dosageForm, expireDate);
-
     }
 
-}
+    @Override
+    public int getStrength() {
+        return super.getStrength();
+    }
+
+    @Override
+    public String getNameOfMedication() {
+        return super.getNameOfMedication();
+    }
+
+    @Override
+    public String getDosageForm() {
+        return super.getDosageForm();
+    }
+    public void register(Medication medication){
+        Registerer registerer = new Registerer();
+        registerer.register(medication);
+
+        }
+    }
+
