@@ -2,9 +2,12 @@
 *
 * Sends notification if a prescription object is added to PrescriptionRecords table  */
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.sql.*;
+
 
 public class PrescriptionNotifier implements Callable {
     Connection connection = null;
@@ -62,6 +65,7 @@ public class PrescriptionNotifier implements Callable {
         return dateAndTime;
     }
 
+    @NotNull
     private Map getPrescriptions(){
         Map<String, Medication> prescriptions = new HashMap<>();
         ResultSet newPrescriptions = this.getTable();
@@ -88,8 +92,13 @@ public class PrescriptionNotifier implements Callable {
         }
     }
 
-    public String call(){
-
-        return "";
+    public ArrayList call(){
+        ArrayList<String> prescriptionStrings = new ArrayList<>();
+        Map<String,Prescription> prescriptions=(HashMap)this.getPrescriptions();
+        for (Map.Entry<String,Prescription> prescription:prescriptions.entrySet()){
+            Prescription prescription1 = prescription.getValue();
+            prescriptionStrings.add(prescription1.toString());
+        }
+        return prescriptionStrings;
     };
 }
