@@ -22,6 +22,15 @@ public class PrescriptionNotifier implements Callable {
         }
     }
 
+    private void getMetaDataOfTable(){
+        DatabaseMetaData tableMetaData;
+        try{
+            DatabaseMetaData dbMetaData = connection.getMetaData();
+
+        }catch (SQLException e){
+            System.out.println("can't getMetadata of prescription table " + e.getMessage());
+        }
+    }
 
     public String call(){
 

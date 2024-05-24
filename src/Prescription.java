@@ -58,6 +58,10 @@ public class Prescription extends Medication {
         isDispensed = dispensed;
     }
 
+    public boolean isDispensed() {
+        return isDispensed;
+    }
+
     @Override
     public String toString() {
         return super.getNameOfMedication() + super.getStrength() + super.getDosageForm() + dose + frequency + duration;

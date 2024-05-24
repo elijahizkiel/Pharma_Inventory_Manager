@@ -6,7 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="1738bcc0-6da0-4343-a5ea-0e6b391d00ce" name="Changes" comment="DataModifierAndAccessor changed into interface and added another classes">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Notifier.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/PrescriptionNotifier.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Prescriber.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Prescriber.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Prescription.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Prescription.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/PrescriptionNotifier.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/PrescriptionNotifier.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

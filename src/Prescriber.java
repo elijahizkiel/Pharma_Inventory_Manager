@@ -4,10 +4,12 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class Prescriber implements DataBaseModifierAndAccessor{
-    String location = "jdbc:sqlite:InventoryManager.db";
+    String location;
     Connection connection = null;
 
-    public Prescriber(){}
+    public Prescriber(){
+        location = "jdbc:sqlite:InventoryManager.db";
+    }
     public Prescriber(String location){
          this.location = location;
      }
@@ -25,7 +27,9 @@ public class Prescriber implements DataBaseModifierAndAccessor{
     public void createTable(){
         try {
             Statement tableCreator = connection.createStatement();
-            tableCreator.execute("CREATE TABLE IF NOT EXISTS PrescriptionsRecords(prescriptionNumber TEXT PRIMARY KEY ,dateAndTime BIGINT, nameOfMedication TEXT, dosageForm TEXT, strength INTEGER, dose TEXT,amount INTEGER, isDispensed BOOLEAN)");
+            tableCreator.execute("CREATE TABLE IF NOT EXISTS PrescriptionsRecords(prescriptionNumber " +
+                    "TEXT PRIMARY KEY ,dateAndTime BIGINT, nameOfMedication TEXT, dosageForm TEXT," +
+                    " strength INTEGER, dose TEXT,amount INTEGER, isDispensed BOOLEAN)");
         } catch(SQLException e){
             System.out.println("can't create prescription table " + e.getMessage());
         }
@@ -83,11 +87,10 @@ public class Prescriber implements DataBaseModifierAndAccessor{
         try {
             String querySet = "insert into PrescriptionsRecords values (?,?,?,?,?,?)";
             command = connection.prepareStatement(querySet);
-            command.setString(2,prescription.getPrescriptionNumber());
-            //System.out.println("dispenseNumber is set ");
-            System.out.println("prescriptionNumbers is set");
             command.setTimestamp(1,nowTime);
             System.out.println("dateAndTime is set");
+            command.setString(2,prescription.getPrescriptionNumber());
+            System.out.println("prescriptionNumbers is set");
             command.setString(3,prescription.getNameOfMedication());
             System.out.println("nameOfMedication is set");
             command.setString(4,prescription.getDosageForm());
@@ -96,6 +99,10 @@ public class Prescriber implements DataBaseModifierAndAccessor{
             System.out.println("strength is set");
             command.setString(6,prescription.getDose());
             System.out.println("dose is set");
+            command.setInt(7, prescription.getAmount());
+            System.out.println("Amount is set");
+            command.setBoolean(8, prescription.isDispensed());
+            System.out.println("Dispense status is set");
             command.executeUpdate();
             System.out.println("Data inserted");
         } catch(SQLException exception) {
