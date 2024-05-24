@@ -8,8 +8,8 @@ public class Prescription extends Medication {
 
     private final String dose;
     private final int amount;
-    private final int frequency;
-    private final int duration;
+    private int frequency;
+    private int duration;
     private final String prescriptionNumber;
     private boolean isDispensed = false;
     Prescriber prescriber = new Prescriber();
@@ -23,9 +23,14 @@ public class Prescription extends Medication {
         this.amount = frequency * duration;
         LocalDateTime dateTime = LocalDateTime.now();
         UUID id = UUID.randomUUID();
-        this.prescriptionNumber = id.toString(); //+ "DT" + dateTime;
+        this.prescriptionNumber = id.toString() + "DT" + dateTime;
     }
-
+    public Prescription(String prescriptionNumber, String nameOfMedication, int strength,String dosageForm,String dose,int amount ){
+        super(nameOfMedication,strength,dosageForm);
+        this.dose = dose;
+        this.amount =amount;
+        this.prescriptionNumber = prescriptionNumber;
+    }
     public String getNameOfMedication() {
         return super.getNameOfMedication();
     }
