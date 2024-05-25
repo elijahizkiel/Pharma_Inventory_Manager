@@ -33,4 +33,5 @@ public abstract class Medication {
     public Date getExpireDate() {
         return expireDate;
     }
+
 }

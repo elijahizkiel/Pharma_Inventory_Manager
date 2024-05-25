@@ -4,14 +4,18 @@
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.*;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.sql.*;
 
 
-public class PrescriptionNotifier implements Callable {
+public class PrescriptionNotifier implements Callable<ArrayList<String>>, Serializable
+{
     Connection connection = null;
     String location;
+    long oldLastRowPointer;
+    transient long newLastRowPointer;
 
     PrescriptionNotifier(){
         location = "jdbc:sqlite:.InventoryManager.db";
@@ -65,8 +69,8 @@ public class PrescriptionNotifier implements Callable {
         return dateAndTime;
     }
 
-    @NotNull
-    private Map getPrescriptions(){
+
+    private @NotNull Map<String, Medication> getPrescriptions(){
         Map<String, Medication> prescriptions = new HashMap<>();
         ResultSet newPrescriptions = this.getTable();
         try{
@@ -92,13 +96,13 @@ public class PrescriptionNotifier implements Callable {
         }
     }
 
-    public ArrayList call(){
+    public ArrayList<String> call(){
         ArrayList<String> prescriptionStrings = new ArrayList<>();
-        Map<String,Prescription> prescriptions=(HashMap)this.getPrescriptions();
-        for (Map.Entry<String,Prescription> prescription:prescriptions.entrySet()){
-            Prescription prescription1 = prescription.getValue();
+        Map<String, Medication> prescriptions = this.getPrescriptions();
+        for (Map.Entry<String,Medication> prescription:prescriptions.entrySet()){
+            Prescription prescription1 =(Prescription) prescription.getValue();
             prescriptionStrings.add(prescription1.toString());
         }
         return prescriptionStrings;
-    };
+    }
 }

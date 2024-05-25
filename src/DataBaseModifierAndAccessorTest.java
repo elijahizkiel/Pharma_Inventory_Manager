@@ -1,3 +1,5 @@
+import org.jetbrains.annotations.NotNull;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -8,16 +10,7 @@ public class DataBaseModifierAndAccessorTest {
         Prescriber DBMA = new Prescriber("jdbc:sqlite:..DBMAtrial.db");
         Dispenser DBMA2 = new Dispenser("jdbc:sqlite:..DBMAtrial.db");
 
-        Prescription p1 = new Prescription("paracetamol", 500,"Suspension", "BID", 2,7);
-        Prescription p2 = new Prescription("paracetamol", 250,"Suspension", "BID", 2,7);
-        Prescription p3 = new Prescription("paracetamol", 500,"Tablet", "TID", 3,7);
-        Prescription p4 = new Prescription("paracetamol", 500,"Suspension", "BID", 2,7);
-
-        ArrayList<Prescription> prescriptions = new ArrayList<>();
-        prescriptions.add(p1);
-        prescriptions.add(p2);
-        prescriptions.add(p3);
-        prescriptions.add(p4);
+        ArrayList<Prescription> prescriptions = getPrescriptionArrayList();
 
         DBMA.prescribe(prescriptions);
         DBMA2.dispense(prescriptions);
@@ -64,5 +57,19 @@ public class DataBaseModifierAndAccessorTest {
            System.out.println("can't get showDispensed " + e.getMessage());
        }
 
+    }
+
+    private static @NotNull ArrayList<Prescription> getPrescriptionArrayList() {
+        Prescription p1 = new Prescription("paracetamol", 500,"Suspension", "BID", 2,7);
+        Prescription p2 = new Prescription("paracetamol", 250,"Suspension", "BID", 2,7);
+        Prescription p3 = new Prescription("paracetamol", 500,"Tablet", "TID", 3,7);
+        Prescription p4 = new Prescription("paracetamol", 500,"Suspension", "BID", 2,7);
+
+        ArrayList<Prescription> prescriptions = new ArrayList<>();
+        prescriptions.add(p1);
+        prescriptions.add(p2);
+        prescriptions.add(p3);
+        prescriptions.add(p4);
+        return prescriptions;
     }
 }

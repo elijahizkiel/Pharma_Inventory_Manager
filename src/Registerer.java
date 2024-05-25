@@ -49,9 +49,8 @@ public class Registerer implements DataBaseModifierAndAccessor{
 
     }
 
-    public void register(@NotNull ArrayList medications){
-        for (Object item : medications) {
-            Medication medication =(Medication) item;
+    public void register(@NotNull ArrayList<Medication> medications){
+        for (Medication medication : medications) {
             insertCommand(medication);
         }
     }
@@ -59,7 +58,7 @@ public class Registerer implements DataBaseModifierAndAccessor{
         insertCommand(medication);
     }
     @Override
-    public ResultSet getInfoFromTable() {
+    public  ResultSet getInfoFromTable() {
         ResultSet resultSet = null;
         try{
             this.connect();
