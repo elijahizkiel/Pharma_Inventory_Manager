@@ -15,7 +15,7 @@ public class PrescriptionNotifier implements Callable<ArrayList<String>>, Serial
     Connection connection = null;
     String location;
     long oldLastRowPointer;
-    transient long newLastRowPointer;
+    transient long newLastRowPointer = this.getLastRowPointer();
 
     PrescriptionNotifier(){
         location = "jdbc:sqlite:.InventoryManager.db";

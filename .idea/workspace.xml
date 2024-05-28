@@ -6,10 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="1738bcc0-6da0-4343-a5ea-0e6b391d00ce" name="Changes" comment="DataModifierAndAccessor changed into interface and added another classes">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/DataBaseModifierAndAccessorTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/DataBaseModifierAndAccessorTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Medication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Medication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/PrescriberGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/PrescriberGUI.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/PrescriptionNotifier.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/PrescriptionNotifier.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Registerer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Registerer.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,7 +71,7 @@
       <ReportDescription localRun="true" path="C:\Users\Y.S\AppData\Local\Temp\qodana_output\qodana.sarif.json" reportGuid="799976d7-ca1f-4232-9309-acfd6229d160" reportId="PharmacyInventoryManager/qodana/2024-05-14" />
     </option>
   </component>
-  <component name="RunManager" selected="Application.DataBaseModifierAndAccessorTest">
+  <component name="RunManager" selected="Application.PrescriberGUI">
     <configuration name="DataBaseModifierAndAccessorTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="DataBaseModifierAndAccessorTest" />
       <module name="PharmacyInventoryManager" />
@@ -115,11 +113,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.PrescriberGUI" />
         <item itemvalue="Application.DataBaseModifierAndAccessorTest" />
         <item itemvalue="Application.TrialClass" />
         <item itemvalue="Application.Sample" />
         <item itemvalue="Application.Sample (1)" />
-        <item itemvalue="Application.PrescriberGUI" />
       </list>
     </recent_temporary>
   </component>
@@ -152,6 +150,11 @@
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
+    <option name="OPEN_GENERIC_TABS">
+      <map>
+        <entry key="813895ed-ff29-41f4-9595-fb9920900ac0" value="TOOL_WINDOW" />
+      </map>
+    </option>
     <option name="RECENT_FILTERS">
       <map>
         <entry key="User">
@@ -169,6 +172,11 @@
     </option>
     <option name="TAB_STATES">
       <map>
+        <entry key="813895ed-ff29-41f4-9595-fb9920900ac0">
+          <value>
+            <State />
+          </value>
+        </entry>
         <entry key="MAIN">
           <value>
             <State>
