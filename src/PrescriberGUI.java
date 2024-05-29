@@ -26,7 +26,6 @@ public class PrescriberGUI extends JFrame {
         imagePanel.add(label);
         imagePanel.setBorder(border);
         imagePanel.setBounds(40,0,1100,250);
-
         imagePanel.setBackground(Color.WHITE);
 
         containerPanel.add(prescribingPanel);
@@ -47,7 +46,7 @@ public class PrescriberGUI extends JFrame {
         this.getContentPane().add(prescriptionPane);
         this.add(addMedicationButton);
         this.add(prescribeButton);
-        this.setBackground(Color.cyan);
+        this.setBackground(Color.CYAN);
         this.setLayout(null);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setVisible(true);
@@ -69,7 +68,7 @@ public class PrescriberGUI extends JFrame {
             if (e.getSource() == addMedicationButton){
                 addMedication();
             } else if (e.getSource() == prescribeButton) {
-
+//                prescribe();
             }
         }
     }
@@ -80,12 +79,12 @@ class PrescribePanel extends JPanel {
     JTextField duration =new JTextField(),dose = new JTextField();
 
     public PrescribePanel(){
-        nameOfMedication.setSize(70,40);
-        strength.setSize(70,40);
-        dosageForm.setSize(70,40);
-        frequency.setSize(70,40);
-        duration.setSize(70,40);
-        dose.setSize(70,40);
+        nameOfMedication.setSize(70,30);
+        strength.setSize(70,30);
+        dosageForm.setSize(70,30);
+        frequency.setSize(70,30);
+        duration.setSize(70,30);
+        dose.setSize(70,30);
         GridLayout gridLayout = new GridLayout(2,6,5,5);
         this.add(new JLabel("Name Of Medication"));
         this.add(new JLabel("Strength"));
