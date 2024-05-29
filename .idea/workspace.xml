@@ -5,12 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1738bcc0-6da0-4343-a5ea-0e6b391d00ce" name="Changes" comment="DataModifierAndAccessor changed into interface and added another classes">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DBMADispensed.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/DBMADispensed.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DBMAPrescribed.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/DBMAPrescribed.pdf" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Reporter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Reporter.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

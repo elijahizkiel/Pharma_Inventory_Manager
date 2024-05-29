@@ -109,10 +109,15 @@ public class Reporter implements DataBaseModifierAndAccessor {
         return result;
     }
 
-
+    public ResultSet runQuery(String query){
+        ResultSet resultSet = null;
+        try{
+            Statement statement = connection.createStatement();
+            resultSet = statement.executeQuery(query);
+        }catch(SQLException e){
+            System.out.println("can't run the query" + e.getMessage());
+        }
+        return resultSet;
+    }
     //reports how many prescriptions are done in given time interval
-
-
-    //
-
 }

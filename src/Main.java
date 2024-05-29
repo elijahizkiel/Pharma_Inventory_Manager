@@ -34,11 +34,13 @@ public class Main extends JFrame {
     private class HomePanel extends JPanel{
 
         JLabel availableMedsLabel = new JLabel("Available Medications");
-        JLabel medsInShortageLabel = new JLabel("Medications In shortage");
-        JLabel medsDispensedLabel = new JLabel("Medications Dispensed in Last week");
+        JLabel medsInShortageLabel = new JLabel("Medications In shortage ");
+        JLabel medsDispensedLabel = new JLabel("<html>Medications Dispensed <br> in Last Seven Days</html>");
         JLabel totalCountLabel = new JLabel("Count of total available medications: ");
         JLabel typeCountLabel = new JLabel("Count of medications by their name: ");
+
         public HomePanel() {
+            //setting specifications for availableMedsLabel
             availableMedsLabel.setBounds(50, 50, 300, 200);
             availableMedsLabel.setBackground(Color.lightGray);
             availableMedsLabel.setForeground(Color.WHITE);
@@ -46,6 +48,7 @@ public class Main extends JFrame {
             availableMedsLabel.setFont(font);
             availableMedsLabel.setBorder(border);
 
+            //setting specifications for medsInShortageLabel
             medsInShortageLabel.setBounds(400, 50, 300, 200);
             medsInShortageLabel.setForeground(Color.WHITE);
             medsInShortageLabel.setBackground(Color.lightGray);
@@ -53,6 +56,7 @@ public class Main extends JFrame {
             medsInShortageLabel.setFont(font);
             medsInShortageLabel.setBorder(border);
 
+            //setting specifications for medsDispensedLabel
             medsDispensedLabel.setBounds(750, 50, 300, 200);
             medsDispensedLabel.setForeground(Color.WHITE);
             medsDispensedLabel.setBackground(Color.lightGray);
@@ -60,6 +64,7 @@ public class Main extends JFrame {
             medsDispensedLabel.setFont(font);
             medsDispensedLabel.setBorder(border);
 
+            //setting specifications for totalCountLabel
             totalCountLabel.setBounds(100, 300, 400, 150);
             totalCountLabel.setBackground(Color.lightGray);
             totalCountLabel.setOpaque(true);
@@ -67,8 +72,11 @@ public class Main extends JFrame {
             totalCountLabel.setBorder(border);
             totalCountLabel.setForeground(Color.WHITE);
 
+            //setting specifications for typeCountLabel
             typeCountLabel.setBorder(border);
             typeCountLabel.setForeground(Color.WHITE);
+            typeCountLabel.setOpaque(true);
+            typeCountLabel.setFont(font);
             typeCountLabel.setBackground(Color.lightGray);
             typeCountLabel.setBounds(550, 300, 400, 150);
 
