@@ -1,6 +1,8 @@
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
+import java.sql.ResultSet;
+
 public class Main extends JFrame {
     JTabbedPane mainPane;
     JPanel homePanel,inventoryPanel, reportsPanel, notificationPanel;
@@ -82,19 +84,19 @@ public class Main extends JFrame {
         JButton addNewButton;
         JScrollPane scrollPane;
         InventoryPanel(){
-             table = new JTable(10,5);
-             table.setFillsViewportHeight(true);
-             table.setRowHeight(30);
-             scrollPane = new JScrollPane(table);addNewButton = new JButton("Add New medication");
-             addNewButton.setBounds(700,50,170,40);
+            table = new JTable(10,5);
+            table.setFillsViewportHeight(true);
+            table.setRowHeight(30);
+            scrollPane = new JScrollPane(table);addNewButton = new JButton("Add New medication");
+            addNewButton.setBounds(700,50,170,40);
 
-             scrollPane.setVisible(true);
-             scrollPane.setBounds(100,200,800,300);
-             scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-             setBackground(Color.lightGray);
-             add(scrollPane);
-             add(addNewButton);
-             setLayout(null);
+            scrollPane.setVisible(true);
+            scrollPane.setBounds(100,200,800,300);
+            scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+            setBackground(Color.lightGray);
+            add(scrollPane);
+            add(addNewButton);
+            setLayout(null);
         }
     }
     public static void main(String[] args) {
