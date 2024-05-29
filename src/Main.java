@@ -2,6 +2,9 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Objects;
 
 public class Main extends JFrame {
     JTabbedPane mainPane;
@@ -84,10 +87,41 @@ public class Main extends JFrame {
         JButton addNewButton;
         JScrollPane scrollPane;
         InventoryPanel(){
-            table = new JTable(10,5);
-            table.setFillsViewportHeight(true);
-            table.setRowHeight(30);
-            scrollPane = new JScrollPane(table);addNewButton = new JButton("Add New medication");
+            Reporter reporter = new Reporter("jdbc:sqlite:..DBMAtrial.db");
+            ResultSet tableData = reporter.showDispensed();
+
+            if(tableData != null){
+                String[] tableHeader = {"No","Name Of Medication", "Dosage Form","Strength", "Frequency"};
+                Object[][] rowModel = new Object[10][5];
+
+                int rowCount =0;
+                try{
+                    while(tableData.next() && (rowCount <10)){
+                        rowModel[rowCount][0] = rowCount + 1;
+                        rowModel[rowCount][1] = tableData.getString("nameOfMedication");
+                        rowModel[rowCount][2] = tableData.getString("dosageForm");
+                        rowModel[rowCount][3] = tableData.getInt("strength");
+                        rowModel[rowCount][4] = tableData.getInt(4);
+                        ++rowCount;
+                    }
+                }catch (SQLException e){
+                    System.out.println("can't create rowModel" + e.getMessage());
+                }
+
+                table = new JTable(rowModel,tableHeader);
+                table.getColumnModel().getColumn(0).setPreferredWidth(5);
+                table.setFillsViewportHeight(true);
+                table.setRowHeight(30);
+                scrollPane = new JScrollPane(table);
+            }else {
+                JLabel label = new JLabel("No Record of Dispensed Medications");
+                label.setFont(new Font("Arial",Font.BOLD,30));
+                label.setForeground(Color.WHITE);
+                label.setBackground(new Color(50,25,25,200));
+                scrollPane = new JScrollPane(label);
+            }
+
+            addNewButton = new JButton("Add New medication");
             addNewButton.setBounds(700,50,170,40);
 
             scrollPane.setVisible(true);

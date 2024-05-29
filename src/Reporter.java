@@ -66,7 +66,7 @@ public class Reporter implements DataBaseModifierAndAccessor {
         ResultSet countOfMedications = null;
         try {
             Statement queryStatement = this.connection.createStatement();
-            countOfMedications = queryStatement.executeQuery("SELECT nameOfMedication,dosageForm,strength, COUNT(*) FROM DispenseRecords GROUP BY nameOfMedication, dosageForm, strength ORDER BY COUNT(*)");
+            countOfMedications = queryStatement.executeQuery("SELECT nameOfMedication,dosageForm,strength, COUNT(*) FROM DispenseRecords GROUP BY nameOfMedication, dosageForm, strength ORDER BY COUNT(*) DESC");
         }catch (SQLException e){
             System.out.println("can't get query statement result"+ e.getMessage());
         }

@@ -3,7 +3,8 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 ...DBMAtrial.db
-.DBMA.pdf
+.DBMAPrescribed.pdf
+.DBMADispensed.pdf
 ### Eclipse ###
 .apt_generated
 .classpath
