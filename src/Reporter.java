@@ -111,6 +111,7 @@ public class Reporter implements DataBaseModifierAndAccessor {
 
     public ResultSet runQuery(String query){
         ResultSet resultSet = null;
+        this.connect();
         try{
             Statement statement = connection.createStatement();
             resultSet = statement.executeQuery(query);

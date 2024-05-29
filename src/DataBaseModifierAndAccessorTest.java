@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 
 public class DataBaseModifierAndAccessorTest {
+
     public static void main(String[] args) {
         Prescriber DBMA = new Prescriber("jdbc:sqlite:..DBMAtrial.db");
         Dispenser DBMA2 = new Dispenser("jdbc:sqlite:..DBMAtrial.db");

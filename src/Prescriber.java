@@ -9,6 +9,7 @@ public class Prescriber implements DataBaseModifierAndAccessor{
 
     public Prescriber(){
         location = "jdbc:sqlite:InventoryManager.db";
+
     }
     public Prescriber(String location){
          this.location = location;
@@ -35,11 +36,10 @@ public class Prescriber implements DataBaseModifierAndAccessor{
         }
     }
 
-    public void prescribe(@NotNull ArrayList items){
+    public void prescribe(@NotNull ArrayList<Prescription> items){
         this.connect();
         this.createTable();
-        for (Object prescript: items){
-            Prescription prescription = (Prescription) prescript;
+        for (Prescription prescription: items){
             insertCommand(prescription);}
         System.out.println("Prescription is completed");
         try{connection.close();}catch(SQLException e){

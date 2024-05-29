@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class Main extends JFrame {
+    Reporter reporter = new Reporter("jdbc:sqlite:..DBMAtrial.db");
     JTabbedPane mainPane;
     JPanel homePanel,inventoryPanel, reportsPanel, notificationPanel;
     Font font = new Font("Arial",Font.ITALIC,20);
@@ -33,13 +34,22 @@ public class Main extends JFrame {
     }
     private class HomePanel extends JPanel{
 
-        JLabel availableMedsLabel = new JLabel("Available Medications");
-        JLabel medsInShortageLabel = new JLabel("Medications In shortage ");
-        JLabel medsDispensedLabel = new JLabel("<html>Medications Dispensed <br> in Last Seven Days</html>");
-        JLabel totalCountLabel = new JLabel("Count of total available medications: ");
-        JLabel typeCountLabel = new JLabel("Count of medications by their name: ");
-
         public HomePanel() {
+            ResultSet count = reporter.runQuery("SELECT sum(amount) FROM PrescriptionsRecords");
+            int sum = 0;
+            try{
+                sum = count.getInt(1);
+            }catch(SQLException e){
+                System.out.println("can't sum-up amount");
+            }
+
+            //create components to be added to HomePanel
+            JLabel availableMedsLabel = new JLabel("Available Medications");
+            JLabel medsInShortageLabel = new JLabel("Medications In shortage ");
+            JLabel medsDispensedLabel = new JLabel("<html>Medications Dispensed <br> in Last Seven Days</html>");
+            JLabel totalCountLabel = new JLabel("<html>Count of total available <br> medications: "+ sum+"</html>");
+            JLabel typeCountLabel = new JLabel("<html>Count of medications by<br> their name: "+ sum+"</html>");
+
             //setting specifications for availableMedsLabel
             availableMedsLabel.setBounds(50, 50, 300, 200);
             availableMedsLabel.setBackground(Color.lightGray);
@@ -90,12 +100,11 @@ public class Main extends JFrame {
         }
     }
 
-    private static class InventoryPanel extends JPanel{
+    private class InventoryPanel extends JPanel{
         JTable table;
         JButton addNewButton;
         JScrollPane scrollPane;
         InventoryPanel(){
-            Reporter reporter = new Reporter("jdbc:sqlite:..DBMAtrial.db");
             ResultSet tableData = reporter.showDispensed();
 
             if(tableData != null){

@@ -28,7 +28,7 @@ public class Registerer implements DataBaseModifierAndAccessor{
         PreparedStatement command;
         Timestamp nowTime = new Timestamp(System.currentTimeMillis());
         try {
-            String querySet = "insert into PrescriptionsRecords values (?,?,?,?,?,?)";
+            String querySet = "insert into MedicationInStock values (?,?,?,?,?,?)";
             command = connection.prepareStatement(querySet);
             System.out.println("prescriptionNumbers is set");
             command.setString(1,nowTime.toString());

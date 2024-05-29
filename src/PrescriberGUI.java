@@ -2,6 +2,7 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.Border;
 
@@ -17,7 +18,7 @@ public class PrescriberGUI extends JFrame {
 
     JPanel containerPanel = new JPanel();
     PrescribePanel prescribingPanel= new PrescribePanel();
-    PrescribePanel prescribePanel = new PrescribePanel();
+    ArrayList<PrescribePanel> panels = new ArrayList<>();
     JScrollPane prescriptionPane = new JScrollPane(containerPanel);
 
     public PrescriberGUI(){
@@ -27,6 +28,8 @@ public class PrescriberGUI extends JFrame {
         imagePanel.setBorder(border);
         imagePanel.setBounds(40,0,1100,250);
         imagePanel.setBackground(Color.WHITE);
+
+        panels.add(prescribingPanel);
 
         containerPanel.add(prescribingPanel);
         containerPanel.setLayout(new GridLayout(0,1));
@@ -39,6 +42,7 @@ public class PrescriberGUI extends JFrame {
         addMedicationButton.setBounds(1100,400,140,30);
 
         addMedicationButton.addActionListener(new ButtonClickListener());
+        prescribeButton.addActionListener(new ButtonClickListener());
 
         this.setTitle("Prescriber Home");
         this.setSize(1300,900);
@@ -54,8 +58,26 @@ public class PrescriberGUI extends JFrame {
 
     public void addMedication(){
         PrescribePanel panel = new PrescribePanel();
+        panels.add(panel);
         containerPanel.add(panel);
         containerPanel.revalidate();
+    }
+
+    private ArrayList<Prescription> getPrescriptions(ArrayList<PrescribePanel> panels){
+        ArrayList<Prescription> prescriptions = new ArrayList<>();
+        for(PrescribePanel panel: panels){
+            Prescription prescription = new Prescription(panel.nameOfMedication.getText(),Integer.parseInt(panel.strength.getText()),
+                    panel.dosageForm.getText(),panel.dose.getText(),Integer.parseInt(panel.frequency.getText()),
+                    Integer.parseInt(panel.duration.getText()));
+            prescriptions.add(prescription);
+        }
+        return prescriptions;
+    }
+
+    private void prescribe(ArrayList<PrescribePanel> panels){
+        ArrayList<Prescription> prescriptions = getPrescriptions(panels);
+        Prescriber prescriber = new Prescriber("jdbc:sqlite:..DBMAtrial.db");
+        prescriber.prescribe(prescriptions);
     }
     public static void main(String[] args) {
         new PrescriberGUI();
@@ -65,11 +87,7 @@ public class PrescriberGUI extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent e){
-            if (e.getSource() == addMedicationButton){
-                addMedication();
-            } else if (e.getSource() == prescribeButton) {
-//                prescribe();
-            }
+            if (e.getSource() == addMedicationButton) addMedication(); else if (e.getSource() == prescribeButton) prescribe(panels);
         }
     }
 }
@@ -79,8 +97,9 @@ class PrescribePanel extends JPanel {
     JTextField duration =new JTextField(),dose = new JTextField();
 
     public PrescribePanel(){
+        Dimension dm = new Dimension(70,30);
         nameOfMedication.setSize(70,30);
-        strength.setSize(70,30);
+        strength.setPreferredSize(dm);//Size(70,30);
         dosageForm.setSize(70,30);
         frequency.setSize(70,30);
         duration.setSize(70,30);
