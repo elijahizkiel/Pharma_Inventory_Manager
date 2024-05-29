@@ -17,7 +17,7 @@ import java.util.Objects;
 
 public class Reporter implements DataBaseModifierAndAccessor {
 
-    Connection connect = null;
+    Connection connection = null;
     String location ="jdbc:sqlite:.InventoryManager.db";
     Reporter(){}
     Reporter(String location){
@@ -37,8 +37,9 @@ public class Reporter implements DataBaseModifierAndAccessor {
             ResultSet resultSet = this.getInfoFromTable(nameOfTable);
 
            try{
+               int count = resultSet.getMetaData().getColumnCount();
                while( resultSet.next()){
-                for(int i = 0; i < 5; ++i ){
+                for(int i = 0; i < count; ++i ){
                     table.addCell(new PdfPCell(new Paragraph(resultSet.getString(i + 1))));
                 }
                 document.add(table);
@@ -61,9 +62,10 @@ public class Reporter implements DataBaseModifierAndAccessor {
     ResultSet showDispensed (){
         /*
         * returns paired set of prescribed items and count  */
+        this.connect();
         ResultSet countOfMedications = null;
         try {
-            Statement queryStatement = this.connect.createStatement();
+            Statement queryStatement = this.connection.createStatement();
             countOfMedications = queryStatement.executeQuery("SELECT nameOfMedication,dosageForm,strength, COUNT(*) FROM DispenseRecords GROUP BY nameOfMedication, dosageForm, strength");
         }catch (SQLException e){
             System.out.println("can't get query statement result"+ e.getMessage());
@@ -75,7 +77,7 @@ public class Reporter implements DataBaseModifierAndAccessor {
     @Override
     public void connect() {
          try{
-             connect = DriverManager.getConnection(location);
+             connection = DriverManager.getConnection(location);
          } catch (SQLException e){
              System.out.println("can't connect from reporter " + e.getMessage());
          }
@@ -95,10 +97,10 @@ public class Reporter implements DataBaseModifierAndAccessor {
     public ResultSet getInfoFromTable(String nameOfTable){
          ResultSet result = null;
          if(Objects.equals(nameOfTable,"Prescribe")){
-             Prescriber prescriber = new Prescriber();
+             Prescriber prescriber = new Prescriber(location);
              result = prescriber.getInfoFromTable();
          } else if (Objects.equals(nameOfTable, "Dispense")) {
-             Dispenser dispenser = new Dispenser();
+             Dispenser dispenser = new Dispenser(location);
              result = dispenser.getInfoFromTable();
          } else if (Objects.equals(nameOfTable, "MedicationInStock")) {
              Registerer registerer = new Registerer();

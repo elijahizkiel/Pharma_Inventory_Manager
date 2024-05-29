@@ -51,7 +51,6 @@ public class DataBaseModifierAndAccessorTest {
        try{
            while(dispenseCount.next()){
                    System.out.printf("%s   %-15s %-15d %d %n",dispenseCount.getString(1),dispenseCount.getString(2),dispenseCount.getInt(3),dispenseCount.getInt(4));
-
            }
        }catch(SQLException e){
            System.out.println("can't get showDispensed " + e.getMessage());

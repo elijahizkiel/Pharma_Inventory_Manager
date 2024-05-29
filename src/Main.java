@@ -14,7 +14,6 @@ public class Main extends JFrame {
         homePanel = new HomePanel();
         inventoryPanel = new InventoryPanel();
 
-
         mainPane.addTab("Home", homePanel);
         mainPane.addTab("Inventory", inventoryPanel);
         mainPane.addTab("Reports", reportsPanel);
@@ -67,7 +66,8 @@ public class Main extends JFrame {
             typeCountLabel.setForeground(Color.WHITE);
             typeCountLabel.setBackground(Color.lightGray);
             typeCountLabel.setBounds(550, 300, 400, 150);
-//setting home panel
+
+            //setting home panel
             add(availableMedsLabel);
             add(medsInShortageLabel);
             add(medsDispensedLabel);
@@ -77,25 +77,24 @@ public class Main extends JFrame {
         }
     }
 
-    private class InventoryPanel extends JPanel{
+    private static class InventoryPanel extends JPanel{
         JTable table;
         JButton addNewButton;
         JScrollPane scrollPane;
         InventoryPanel(){
-            table = new JTable(5,5);
-//            tabl
-            table.setBorder(border);
+             table = new JTable(10,5);
+             table.setFillsViewportHeight(true);
+             table.setRowHeight(30);
+             scrollPane = new JScrollPane(table);addNewButton = new JButton("Add New medication");
+             addNewButton.setBounds(700,50,170,40);
 
-            scrollPane = new JScrollPane(table);addNewButton = new JButton("Add New medication");
-            addNewButton.setBounds(700,50,170,40);
-
-            scrollPane.setVisible(true);
-            scrollPane.setBounds(100,200,800,300);
-            scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-            setBackground(Color.lightGray);
-            add(scrollPane);
-            add(addNewButton);
-            setLayout(null);
+             scrollPane.setVisible(true);
+             scrollPane.setBounds(100,200,800,300);
+             scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+             setBackground(Color.lightGray);
+             add(scrollPane);
+             add(addNewButton);
+             setLayout(null);
         }
     }
     public static void main(String[] args) {

@@ -65,15 +65,31 @@ public class Dispenser implements DataBaseModifierAndAccessor{
             for (Object prescript : prescriptions) {
                 Prescription prescription = (Prescription) prescript;
                 insertCommand(prescription);
+                dispenseStatus(prescription);
             }
+        }
+    }
+
+    private void dispenseStatus(@NotNull Prescription prescription){
+        try {
+            String query ="UPDATE PrescriptionsRecords SET isDispensed = ? WHERE prescriptionNumber = ?";
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setBoolean(1,true);
+            statement.setString(2, prescription.getPrescriptionNumber());
+            statement.executeUpdate();
+            System.out.println("IsDispensed status Updated successfully for " + prescription.getNameOfMedication());
+        }catch (SQLException e){
+            System.out.println("can't update prescription table " + e.getMessage());
         }
     }
 
     @Override
     public ResultSet getInfoFromTable(){
+        this.connect();
         ResultSet result = null;
         try {
-            PreparedStatement selectTableQuery = connection.prepareStatement("SELECT prescriptionNumber, nameOfMedication, strength, dosageForm FROM DispenseRecords ");
+            PreparedStatement selectTableQuery = connection.prepareStatement("SELECT prescriptionNumber," +
+                    " nameOfMedication, strength, dosageForm FROM DispenseRecords ");
 //            selectTableQuery.setString(1,nameOfTable);
             result = selectTableQuery.executeQuery();
         }catch (SQLException e){

@@ -28,7 +28,7 @@ public class Prescriber implements DataBaseModifierAndAccessor{
         try {
             Statement tableCreator = connection.createStatement();
             tableCreator.execute("CREATE TABLE IF NOT EXISTS PrescriptionsRecords(prescriptionNumber " +
-                    "TEXT PRIMARY KEY ,dateAndTime BIGINT, nameOfMedication TEXT, dosageForm TEXT," +
+                    "TEXT, dateAndTime BIGINT, nameOfMedication TEXT, dosageForm TEXT," +
                     " strength INTEGER, dose TEXT,amount INTEGER, isDispensed BOOLEAN)");
         } catch(SQLException e){
             System.out.println("can't create prescription table " + e.getMessage());
@@ -85,11 +85,11 @@ public class Prescriber implements DataBaseModifierAndAccessor{
         PreparedStatement command;
         Timestamp nowTime = new Timestamp(System.currentTimeMillis());
         try {
-            String querySet = "insert into PrescriptionsRecords values (?,?,?,?,?,?)";
+            String querySet = "insert into PrescriptionsRecords values (?,?,?,?,?,?,?,?)";
             command = connection.prepareStatement(querySet);
-            command.setTimestamp(1,nowTime);
+            command.setTimestamp(2,nowTime);
             System.out.println("dateAndTime is set");
-            command.setString(2,prescription.getPrescriptionNumber());
+            command.setString(1,prescription.getPrescriptionNumber());
             System.out.println("prescriptionNumbers is set");
             command.setString(3,prescription.getNameOfMedication());
             System.out.println("nameOfMedication is set");
