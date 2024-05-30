@@ -3,6 +3,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.concurrent.*;
 import javax.swing.*;
 
 public class Main extends JFrame {
@@ -16,7 +17,7 @@ public class Main extends JFrame {
         homePanel = new HomePanel();
         inventoryPanel = new InventoryPanel();
         reportsPanel = new ReportsPanel();
-//        notificationPanel =
+        notificationPanel = new NotificationPanel();
 
 
         mainPane.addTab("Home", homePanel);
@@ -127,7 +128,34 @@ public class Main extends JFrame {
     }
 
     private class NotificationPanel extends JPanel{
+        JSplitPane splitPane1;
+        JSplitPane splitPane2;
+        JList newPrescriptionList;
+        JList expiredMedList;
+        JList notDispensedList;
+        public NotificationPanel(){
+            PrescriptionNotifier prescriptionNotifier = new PrescriptionNotifier("jdbc:sqlite: ..DBMAtrial.db");
+             ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 
+            expiredMedList = new JList<>();
+            JScrollPane expiredListScroll = new JScrollPane(expiredMedList);
+            expiredListScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+
+            notDispensedList= new JList<>();
+            JScrollPane notDispensedListScroll = new JScrollPane(notDispensedList);
+            notDispensedListScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+
+            newPrescriptionList = new JList<>();
+            JScrollPane newPrescriptionListScroll = new JScrollPane(newPrescriptionList);
+            newPrescriptionListScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+
+            splitPane1 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,newPrescriptionListScroll,notDispensedListScroll);
+            splitPane2 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, splitPane1,expiredListScroll);
+
+            splitPane2.setBounds(50,50,1050,400);
+            add(splitPane2);
+            setLayout(null);
+        }
     }
 
     private class ReportsPanel extends JPanel{

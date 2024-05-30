@@ -10,12 +10,11 @@ import java.util.concurrent.Callable;
 import java.sql.*;
 
 
-public class PrescriptionNotifier implements Callable<ArrayList<String>>, Serializable
-{
+public class PrescriptionNotifier implements Callable<ArrayList<String>>, Serializable {
     Connection connection = null;
     String location;
     long oldLastRowPointer;
-    transient long newLastRowPointer = this.getLastRowPointer();
+    transient long newLastRowPointer;
 
     PrescriptionNotifier(){
         location = "jdbc:sqlite:.InventoryManager.db";
@@ -23,6 +22,7 @@ public class PrescriptionNotifier implements Callable<ArrayList<String>>, Serial
     PrescriptionNotifier(String location){
         this.location = location;
     }
+
     private void connect(){
         try{
             connection = DriverManager.getConnection(location);
@@ -32,6 +32,7 @@ public class PrescriptionNotifier implements Callable<ArrayList<String>>, Serial
     }
 
     private ResultSet getTable(){
+        this.connect();
         ResultSet result = null;
         try{
             Statement statement = connection.createStatement();
@@ -45,6 +46,7 @@ public class PrescriptionNotifier implements Callable<ArrayList<String>>, Serial
 
     private ResultSet getTable(long time){
         ResultSet result = null;
+        this.connect();
         try{
             Statement statement = connection.createStatement();
             result = statement.executeQuery("SELECT * FROM PrescriptionsRecords WHERE dateAndTime >= " + time + ";");
