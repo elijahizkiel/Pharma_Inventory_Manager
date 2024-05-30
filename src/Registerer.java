@@ -5,7 +5,15 @@ import java.util.ArrayList;
 
 public class Registerer implements DataBaseModifierAndAccessor{
     Connection connection = null;
-    String location = "jdbc:sqlite:.InventoryManager.db";
+    String location;
+    public Registerer(){
+        location = "jdbc:sqlite:.InventoryManager.db";
+    }
+
+    public Registerer(String location){
+        this.location = location;
+    }
+
     public void connect(){
         try{
             connection = DriverManager.getConnection(location);

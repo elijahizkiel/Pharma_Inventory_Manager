@@ -7,9 +7,11 @@
 import java.util.Date;
 
 public class NewlyPurchasedDrug extends Medication{
+    int amount = 0;
 
-    public NewlyPurchasedDrug(String nameOfMedication, int strength, String dosageForm, Date expireDate){
+    public NewlyPurchasedDrug(String nameOfMedication, int strength, String dosageForm, Date expireDate,int amount){
         super( nameOfMedication, strength, dosageForm, expireDate);
+        this.amount = amount;
     }
 
     @Override
