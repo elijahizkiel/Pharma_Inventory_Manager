@@ -3,13 +3,30 @@ import org.jetbrains.annotations.NotNull;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 
-public class DataBaseModifierAndAccessorTest {
+public class BackEndTest {
 
     public static void main(String[] args) {
         Prescriber DBMA = new Prescriber("jdbc:sqlite:..DBMAtrial.db");
         Dispenser DBMA2 = new Dispenser("jdbc:sqlite:..DBMAtrial.db");
+        Registerer registerer = new Registerer("jdbc:sqlite:..DBMAtrial.db");
+        ArrayList<Medication> medications = new ArrayList<>();
+        medications.add(new NewlyPurchasedDrug("Diclofenac",500, "Suspension",new Date(2025, Calendar.MARCH,24),200));
+        medications.add(new NewlyPurchasedDrug("Paracetamol",500, "Suspension",new Date(2025,02,24),200));
+        medications.add(new NewlyPurchasedDrug("Diclofenac",250, "Suspension",new Date(2025,02,24),200));
+        medications.add(new NewlyPurchasedDrug("Paracetamol",250, "Suspension",new Date(2025,02,24),200));
+        medications.add(new NewlyPurchasedDrug("Diclofenac",500, "Tablet",new Date(2025,02,24),200));
+        medications.add(new NewlyPurchasedDrug("Paracetamol",500, "Tablet",new Date(2025,02,24),200));
+        medications.add(new NewlyPurchasedDrug("Diclofenac",500, "Suspension",new Date(2023,02,24),200));
+        medications.add(new NewlyPurchasedDrug("Diclofenac",500, "Tablet",new Date(2024,02,24),200));
+        medications.add(new NewlyPurchasedDrug("Paracetamol",250, "Tablet",new Date(2025,02,24),200));
+        medications.add(new NewlyPurchasedDrug("Paracetamol",250, "Tablet",new Date(2025,02,24),200));
+
+
+        registerer.register(medications);
 
         ArrayList<Prescription> prescriptions = getPrescriptionArrayList();
 

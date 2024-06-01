@@ -15,6 +15,7 @@ public class PrescriptionNotifier implements Callable<ArrayList<String>>, Serial
     String location;
     long oldLastRowPointer;
     transient long newLastRowPointer;
+    Prescriber prescriber = new Prescriber(location);
 
     PrescriptionNotifier(){
         location = "jdbc:sqlite:.InventoryManager.db";
@@ -33,13 +34,14 @@ public class PrescriptionNotifier implements Callable<ArrayList<String>>, Serial
 
     private ResultSet getTable(){
         this.connect();
+        prescriber.createTable();
         ResultSet result = null;
         try{
             Statement statement = connection.createStatement();
              result = statement.executeQuery("SELECT * FROM PrescriptionsRecords");
 
         }catch(SQLException e){
-            System.out.println("can't get PrescriptionsRecords table " + e.getMessage());
+            System.out.println("can't get PrescriptionsRecords table from Notifier " + e.getMessage());
         }
         return result;
     }
@@ -47,6 +49,7 @@ public class PrescriptionNotifier implements Callable<ArrayList<String>>, Serial
     private ResultSet getTable(long time){
         ResultSet result = null;
         this.connect();
+        prescriber.createTable();
         try{
             Statement statement = connection.createStatement();
             result = statement.executeQuery("SELECT * FROM PrescriptionsRecords WHERE dateAndTime >= " + time + ";");
@@ -62,6 +65,7 @@ public class PrescriptionNotifier implements Callable<ArrayList<String>>, Serial
         this.connect();
         this.sortDataInTable();
         ResultSet result = this.getTable();
+        if(result != null) System.out.println("we got the data table");
         try{
             if(result.isFirst()){
                 dateAndTime = result.getLong("dateAndTime");}
@@ -74,7 +78,8 @@ public class PrescriptionNotifier implements Callable<ArrayList<String>>, Serial
 
     private @NotNull Map<String, Medication> getPrescriptions(){
         Map<String, Medication> prescriptions = new HashMap<>();
-        ResultSet newPrescriptions = this.getTable();
+         ResultSet newPrescriptions = this.getTable();
+        if (newPrescriptions != null) System.out.println("I got the table");
         try{
             while(newPrescriptions.next()){
                 Prescription prescription = new Prescription(newPrescriptions.getString("prescriptionNumber"),
@@ -101,9 +106,11 @@ public class PrescriptionNotifier implements Callable<ArrayList<String>>, Serial
     public ArrayList<String> call(){
         ArrayList<String> prescriptionStrings = new ArrayList<>();
         Map<String, Medication> prescriptions = this.getPrescriptions();
+        if(!prescriptions.isEmpty()) System.out.println("i got prescriptions");
         for (Map.Entry<String,Medication> prescription:prescriptions.entrySet()){
             Prescription prescription1 =(Prescription) prescription.getValue();
             prescriptionStrings.add(prescription1.toString());
+            if(prescription.getValue() != null)System.out.println(prescription1.toString());
         }
         return prescriptionStrings;
     }

@@ -5,8 +5,10 @@ import java.util.ArrayList;
 
 public class Dispenser implements DataBaseModifierAndAccessor{
     Connection connection = null;
-    String location = "jdbc:sqlite:.InventoryManager.db";
-    Dispenser(){}
+    String location;
+    Dispenser(){
+        location = "jdbc:sqlite:.InventoryManager.db";
+    }
     Dispenser(String location){
         this.location = location;
     }
@@ -23,7 +25,8 @@ public class Dispenser implements DataBaseModifierAndAccessor{
     public void createTable(){
         try {
             Statement tableCreator = connection.createStatement();
-            tableCreator.execute("CREATE TABLE IF NOT EXISTS DispenseRecords(dateAndTime BIGINT,prescriptionNumber TEXT, nameOfMedication TEXT, dosageForm TEXT, strength INTEGER, dose TEXT)");//dispensingNumber TEXT, is to be added.
+            tableCreator.execute("CREATE TABLE IF NOT EXISTS DispenseRecords(dateAndTime BIGINT,prescriptionNumber TEXT," +
+                    " nameOfMedication TEXT, dosageForm TEXT, strength INTEGER, dose TEXT)");//dispensingNumber TEXT, is to be added.
         } catch(SQLException e){
             System.out.println("can't create table " + e.getMessage());
         }
@@ -65,12 +68,12 @@ public class Dispenser implements DataBaseModifierAndAccessor{
             for (Object prescript : prescriptions) {
                 Prescription prescription = (Prescription) prescript;
                 insertCommand(prescription);
-                dispenseStatus(prescription);
+                updateDispenseStatus(prescription);
             }
         }
     }
 
-    private void dispenseStatus(@NotNull Prescription prescription){
+    private void updateDispenseStatus(@NotNull Prescription prescription){
         try {
             String query ="UPDATE PrescriptionsRecords SET isDispensed = ? WHERE prescriptionNumber = ?";
             PreparedStatement statement = connection.prepareStatement(query);
@@ -96,5 +99,18 @@ public class Dispenser implements DataBaseModifierAndAccessor{
             System.out.println("can't get info from DispenseRecords table " + e.getMessage());
         }
         return result;
+    }
+
+    public ResultSet showTopDispensed(){
+        this.connect();
+        this.createTable();
+        ResultSet countOfMedications = null;
+        try {
+            Statement queryStatement = this.connection.createStatement();
+            countOfMedications = queryStatement.executeQuery("SELECT nameOfMedication,dosageForm,strength, COUNT(*) FROM DispenseRecords GROUP BY nameOfMedication, dosageForm, strength ORDER BY COUNT(*) DESC");
+        }catch (SQLException e){
+            System.out.println("can't get query statement result"+ e.getMessage());
+        }
+        return countOfMedications;
     }
 }

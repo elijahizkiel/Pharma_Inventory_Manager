@@ -63,15 +63,8 @@ public class Reporter implements DataBaseModifierAndAccessor {
         /*
         * returns paired set of prescribed items and count  */
         this.connect();
-        ResultSet countOfMedications = null;
-        try {
-            Statement queryStatement = this.connection.createStatement();
-            countOfMedications = queryStatement.executeQuery("SELECT nameOfMedication,dosageForm,strength, COUNT(*) FROM DispenseRecords GROUP BY nameOfMedication, dosageForm, strength ORDER BY COUNT(*) DESC");
-        }catch (SQLException e){
-            System.out.println("can't get query statement result"+ e.getMessage());
-        }
-
-        return countOfMedications;
+        Dispenser dispenser = new Dispenser(location);
+        return dispenser.showTopDispensed();
     }
 
     @Override
@@ -109,9 +102,10 @@ public class Reporter implements DataBaseModifierAndAccessor {
         return result;
     }
 
-    public ResultSet runQuery(String query){
+    public ResultSet runQuery(String query, String runner){
         ResultSet resultSet = null;
         this.connect();
+
         try{
             Statement statement = connection.createStatement();
             resultSet = statement.executeQuery(query);

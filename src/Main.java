@@ -3,13 +3,19 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.concurrent.*;
 import javax.swing.*;
+import java.text.*;
+import java.util.ArrayList;
+import java.util.concurrent.*;
+
 
 public class Main extends JFrame {
     Reporter reporter = new Reporter("jdbc:sqlite:..DBMAtrial.db");
     JTabbedPane mainPane;
-    JPanel homePanel,inventoryPanel, reportsPanel, notificationPanel;
+    JPanel homePanel;
+    static JPanel inventoryPanel;
+    JPanel reportsPanel;
+    JPanel notificationPanel;
 
     public Main(){
         mainPane = new JTabbedPane(SwingConstants.TOP);
@@ -38,7 +44,8 @@ public class Main extends JFrame {
         public HomePanel() {
             ResultSet count = null;
             try {
-                count = reporter.runQuery("SELECT sum(amount) FROM PrescriptionsRecords");
+
+                count = reporter.runQuery("SELECT sum(amount) FROM PrescriptionsRecords", "prescriber");
             }catch(Exception e) {
                 System.out.println("can't send query");
             }
@@ -134,8 +141,16 @@ public class Main extends JFrame {
         JList expiredMedList;
         JList notDispensedList;
         public NotificationPanel(){
-            PrescriptionNotifier prescriptionNotifier = new PrescriptionNotifier("jdbc:sqlite: ..DBMAtrial.db");
+
+            PrescriptionNotifier prescriptionNotifier = new PrescriptionNotifier("jdbc:sqlite:..DBMAtrial.db");
              ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+//             AtomicReference<ArrayList<String>> prescriptionsList = new AtomicReference<>();
+             executorService.scheduleAtFixedRate(()->{
+                 ArrayList<String> prescriptions = prescriptionNotifier.call();
+//                 prescriptionsList.set(prescriptions);
+             },0,10, TimeUnit.SECONDS);
+
+
 
             expiredMedList = new JList<>();
             JScrollPane expiredListScroll = new JScrollPane(expiredMedList);
@@ -145,7 +160,7 @@ public class Main extends JFrame {
             JScrollPane notDispensedListScroll = new JScrollPane(notDispensedList);
             notDispensedListScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
-            newPrescriptionList = new JList<>();
+            //newPrescriptionList = new JList<>((ArrayList)prescriptionsList);
             JScrollPane newPrescriptionListScroll = new JScrollPane(newPrescriptionList);
             newPrescriptionListScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
@@ -189,22 +204,26 @@ public class Main extends JFrame {
         }
     }
 
-    class MyActionListener implements ActionListener {
+     static class MyActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent event) {
             if (event.getSource() == InventoryPanel.addNewButton) {
                 JPanel containerPanel = new JPanel();
                 NewMedPanel newMedPanel = new NewMedPanel();
                 JScrollPane scrollPane2 = new JScrollPane(containerPanel);
-                JButton addToInvenButton = new JButton("Add To Inventory");
+                JButton doneButton = new JButton("Done");
 
                 containerPanel.setPreferredSize(new Dimension(400,300));
                 containerPanel.add(newMedPanel);
-                containerPanel.add(addToInvenButton);
+                containerPanel.add(doneButton);
                 containerPanel.setLayout(new BoxLayout(containerPanel,BoxLayout.Y_AXIS));
 
                 scrollPane2.setBounds(650,200,400,300);
                 scrollPane2.setVisible(true);
+                doneButton.addActionListener(e ->{
+                    Main.inventoryPanel.remove(containerPanel);//Beki check this if you can
+                    System.out.println("doneButton clicked");//Main.inventoryPanel.remove(newMedPanel);
+                     });
 
                 InventoryPanel invenPanel = (InventoryPanel)inventoryPanel;
                 invenPanel.scrollPane1.setBounds(100,200,500,300);
@@ -229,8 +248,9 @@ class FrontLabel extends JLabel{
     }
 }
 class NewMedPanel extends JPanel{
-    JTextField nameOfMedication,strength,dosageForm, date,amount;
-    JLabel nameLabel,strengthLabel, formLabel, dateLabel,amountLabel;
+    static JTextField nameOfMedication,strength,dosageForm, date,amount;
+    static JLabel nameLabel,strengthLabel, formLabel, dateLabel,amountLabel;
+    static JButton addToInvenButton;
     public NewMedPanel(){
         nameOfMedication = new JTextField();
         strength = new JTextField();
@@ -241,14 +261,30 @@ class NewMedPanel extends JPanel{
         nameLabel = new JLabel("Name Of medication");
         strengthLabel = new JLabel("Strength");
         formLabel = new JLabel("Dosage Form");
-        dateLabel = new JLabel("Date");
+        dateLabel = new JLabel("Expire Date(use yyyy-MM-dd format)");
         amountLabel = new JLabel("Amount");
 
+        addToInvenButton  = new JButton("Add To Inventory");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        addToInvenButton.addActionListener(e -> {
+            Registerer registerer = new Registerer("jdbc:sqlite:..DBMAtrial.db");
+            NewlyPurchasedDrug newMed = null;
+                    try{
+                        newMed= new NewlyPurchasedDrug(NewMedPanel.nameOfMedication.getText(),
+                                Integer.parseInt(NewMedPanel.strength.getText()),NewMedPanel.dosageForm.getText(),
+                                dateFormat.parse(NewMedPanel.date.getText()),Integer.parseInt(NewMedPanel.amount.getText()));
+                    }catch(ParseException exception){
+                        System.out.println(exception.getMessage());
+                    }
+            registerer.register(newMed);
+
+        });
         add(nameLabel);add(nameOfMedication);
         add(strengthLabel); add(strength);
         add(formLabel); add(dosageForm);
         add(dateLabel);add(date);
         add(amountLabel);add(amount);
+        add(addToInvenButton);
 
         setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
     }

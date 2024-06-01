@@ -28,10 +28,11 @@ public class NewlyPurchasedDrug extends Medication{
     public String getDosageForm() {
         return super.getDosageForm();
     }
-    public void register(Medication medication){
-        Registerer registerer = new Registerer();
-        registerer.register(medication);
 
-        }
+    public int getAmount() {
+        return amount;
     }
+
+
+}
 
