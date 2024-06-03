@@ -84,21 +84,47 @@ public class Registerer implements DataBaseModifierAndAccessor{
         return resultSet;
     }
 
-    public ResultSet getMedsInCount(){
+    public @NotNull Object[][] getMedsInCount(){
         ResultSet medsInCount = null;
         this.connect();
         try{
             Statement run = connection.createStatement();
             medsInCount = run.executeQuery("SELECT nameOfMedication,dosageForm,strength,sum(amount)" +
-                    " FROM MedicationInStock GROUP BY nameOfMedication, dosageForm,strength" +
-                    " ORDER By sum(amount) DESC;");
+                    " FROM MedicationInStock GROUP BY nameOfMedication, dosageForm, strength ORDER By sum(amount) DESC;");
         }catch (SQLException e){
             System.out.println("can't get medsInCount table " + e.getMessage());
         }
-        return medsInCount;
+        return formTable(medsInCount);
     }
 
-//    Object[][] formTable(){
-//        return
-//    }
+    private Object[][] formTable(@NotNull ResultSet tableData){
+        ArrayList<Object[]> tableData2 = new ArrayList<>();
+        try{
+            while(tableData.next()) {
+                Object[] rowData = {tableData.getString("nameOfMedication"), tableData.getString("dosageForm"),
+                        tableData.getInt("strength"), (tableData.getInt(4))};
+                tableData2.add(rowData);
+            }
+        }catch(SQLException e){
+            System.out.println("can't form medsIncount table " + e.getMessage());
+        }
+        Object[][] table = new Object[tableData2.size()][];
+        for(int i = 0; i < tableData2.size(); ++i){
+            table[i] = tableData2.get(i);
+        }
+        return table;
+    }
+
+    public Object[][] medsInShortage(){
+        this.connect();
+        ResultSet medsInShortage = null;
+        try{
+            Statement query = connection.createStatement();
+            medsInShortage = query.executeQuery("SELECT nameOfMedication, dosageForm, strength, sum(amount) FROM MedicationInStock GROUP BY nameOfMedication,dosageForm, strength HAVING sum(amount) <= 50;");
+        }catch (SQLException e){
+            System.out.println("can't get medsInShortage " + e.getMessage());
+        }
+        if(medsInShortage!=null)return formTable(medsInShortage);
+        else return new Object[5][4];
+    }
 }

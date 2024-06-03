@@ -1,6 +1,8 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.*;
@@ -43,6 +45,7 @@ public class Main extends JFrame {
 
     private class HomePanel extends JPanel{
         static JLabel availableMedsLabel,medsInShortageLabel, medsDispensedLabel, typeCountLabel, totalCountLabel;
+        static JDialog availableMeds;
         public HomePanel() {
             ResultSet count = null;
             try {
@@ -61,6 +64,18 @@ public class Main extends JFrame {
             //create components to be added to HomePanel
             availableMedsLabel = new FrontLabel("Available Medications");
             availableMedsLabel.setBounds(50, 50, 300, 200);
+            availableMedsLabel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getSource() == HomePanel.availableMedsLabel) {
+                        Object[][] rowData = new Registerer("jdbc:sqlite:..DBMAtrial.db").getMedsInCount();
+                        Object[] titles = {"Name Of Medication", "Dosage Form", "Strength(mg or mg/ml)", "Amount(count)"};
+                        DefaultTableModel tableModel = new DefaultTableModel(rowData, titles);
+                        availableMeds = new LabelDialog(tableModel);
+                        availableMeds.setVisible(true);
+                    } ;
+                }
+            });
 
             medsInShortageLabel = new FrontLabel("<html>Medications In<br> shortage </html>");
             medsInShortageLabel.setBounds(400, 50, 300, 200);
@@ -210,29 +225,30 @@ public class Main extends JFrame {
      static class MyActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent event) {
+
             if (event.getSource() == InventoryPanel.addNewButton) {
                 JPanel containerPanel = new JPanel();
                 NewMedPanel newMedPanel = new NewMedPanel();
                 JScrollPane scrollPane2 = new JScrollPane(containerPanel);
                 JButton doneButton = new JButton("Done");
 
-                containerPanel.setPreferredSize(new Dimension(400,300));
+                containerPanel.setPreferredSize(new Dimension(400, 300));
                 containerPanel.add(newMedPanel);
                 containerPanel.add(doneButton);
-                containerPanel.setLayout(new BoxLayout(containerPanel,BoxLayout.Y_AXIS));
+                containerPanel.setLayout(new BoxLayout(containerPanel, BoxLayout.Y_AXIS));
 
-                scrollPane2.setBounds(650,200,400,300);
+                scrollPane2.setBounds(650, 200, 400, 300);
                 scrollPane2.setVisible(true);
-                doneButton.addActionListener(e ->{
+                doneButton.addActionListener(e -> {
                     Main.inventoryPanel.remove(containerPanel);//Beki check this if you can
                     System.out.println("doneButton clicked");//Main.inventoryPanel.remove(newMedPanel);
-                     });
+                });
 
-                InventoryPanel invenPanel = (InventoryPanel)inventoryPanel;
-                invenPanel.scrollPane1.setBounds(100,200,500,300);
+                InventoryPanel invenPanel = (InventoryPanel) inventoryPanel;
+                invenPanel.scrollPane1.setBounds(100, 200, 500, 300);
                 inventoryPanel.add(scrollPane2);
-            } else if (event.getSource() == HomePanel.availableMedsLabel){
-
+            } else if (event.getSource() == LabelDialog.okButton) {
+                Main.HomePanel.availableMeds.dispose();
             }
         }
     }
@@ -294,13 +310,25 @@ class NewMedPanel extends JPanel{
         setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
     }
 }
-class LabelDialogues extends JDialog{
+class LabelDialog extends JDialog{
     JScrollPane dialogTable;
-    JButton okButton;
-    LabelDialogues(DefaultTableModel table2){
-        JTable medicationsTable;
-        JPanel tablePanel = new JPanel();
-        dialogTable = new JScrollPane(tablePanel);
+    static JButton okButton = new JButton("OK");
+    LabelDialog(DefaultTableModel tableModel){
+        JTable medicationsTable = new JTable(tableModel);
+//        JPanel tablePanel = new JPanel();
+        dialogTable = new JScrollPane(medicationsTable);
 
+//        tablePanel.add(okButton);
+
+
+        dialogTable.setBounds(5,5,400,300);
+        okButton.setBounds(190,310,70,20);
+        okButton.addActionListener(new Main.MyActionListener());
+//        tablePanel.setPreferredSize(new Dimension(410,330));
+        setSize(new Dimension(410,380));
+        add(dialogTable);
+        add(okButton);
+
+        setLayout(null);
     }
 }
