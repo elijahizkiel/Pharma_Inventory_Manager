@@ -83,4 +83,22 @@ public class Registerer implements DataBaseModifierAndAccessor{
         }
         return resultSet;
     }
+
+    public ResultSet getMedsInCount(){
+        ResultSet medsInCount = null;
+        this.connect();
+        try{
+            Statement run = connection.createStatement();
+            medsInCount = run.executeQuery("SELECT nameOfMedication,dosageForm,strength,sum(amount)" +
+                    " FROM MedicationInStock GROUP BY nameOfMedication, dosageForm,strength" +
+                    " ORDER By sum(amount) DESC;");
+        }catch (SQLException e){
+            System.out.println("can't get medsInCount table " + e.getMessage());
+        }
+        return medsInCount;
+    }
+
+//    Object[][] formTable(){
+//        return
+//    }
 }

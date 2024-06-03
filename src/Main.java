@@ -4,6 +4,8 @@ import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import java.text.*;
 import java.util.ArrayList;
 import java.util.concurrent.*;
@@ -40,12 +42,12 @@ public class Main extends JFrame {
     }
 
     private class HomePanel extends JPanel{
-
+        static JLabel availableMedsLabel,medsInShortageLabel, medsDispensedLabel, typeCountLabel, totalCountLabel;
         public HomePanel() {
             ResultSet count = null;
             try {
 
-                count = reporter.runQuery("SELECT sum(amount) FROM PrescriptionsRecords", "prescriber");
+                count = reporter.runQuery("SELECT sum(amount) FROM MedicationInStock", "prescriber");
             }catch(Exception e) {
                 System.out.println("can't send query");
             }
@@ -57,19 +59,19 @@ public class Main extends JFrame {
             }
 
             //create components to be added to HomePanel
-            JLabel availableMedsLabel = new FrontLabel("Available Medications");
+            availableMedsLabel = new FrontLabel("Available Medications");
             availableMedsLabel.setBounds(50, 50, 300, 200);
 
-            JLabel medsInShortageLabel = new FrontLabel("<html>Medications In<br> shortage </html>");
+            medsInShortageLabel = new FrontLabel("<html>Medications In<br> shortage </html>");
             medsInShortageLabel.setBounds(400, 50, 300, 200);
 
-            JLabel medsDispensedLabel = new FrontLabel("<html>Medications Dispensed <br> in Last Seven Days</html>");
+            medsDispensedLabel = new FrontLabel("<html>Medications Dispensed <br> in Last Seven Days</html>");
             medsDispensedLabel.setBounds(750, 50, 300, 200);
 
-            JLabel totalCountLabel = new FrontLabel("<html>Count of total available <br> medications: "+ sum+"</html>");
+            totalCountLabel = new FrontLabel("<html>Count of total available <br> medications: "+ sum+"</html>");
             totalCountLabel.setBounds(100, 300, 400, 150);
 
-            JLabel typeCountLabel = new FrontLabel("<html>Count of medications by<br> their name: "+ sum+"</html>");
+            typeCountLabel = new FrontLabel("<html>Count of medications by<br> their name: "+ sum+"</html>");
             typeCountLabel.setBounds(550, 300, 400, 150);
 
             //setting home panel
@@ -178,11 +180,11 @@ public class Main extends JFrame {
         JLabel countOfDispensedMeds;
         JLabel nearToExpireMeds;
         JLabel medsInInventory;
-        JComboBox downloadReportButton;
+        JButton downloadReportButton;
 
         public ReportsPanel(){
-            downloadReportButton = new JComboBox();
-            downloadReportButton.setBounds(700,25,50,20);
+            downloadReportButton = new JButton("Download Report(in .pdf)");
+            downloadReportButton.setBounds(800,25,180,20);
 
             countOfPrescribedMeds = new FrontLabel("<html> Total medications <br>Prescribed</html>");
             countOfPrescribedMeds.setBounds(50,100,250,200);
@@ -200,6 +202,7 @@ public class Main extends JFrame {
             add(countOfDispensedMeds);
             add(nearToExpireMeds);
             add(medsInInventory);
+            add(downloadReportButton);
             setLayout(null);
         }
     }
@@ -228,6 +231,8 @@ public class Main extends JFrame {
                 InventoryPanel invenPanel = (InventoryPanel)inventoryPanel;
                 invenPanel.scrollPane1.setBounds(100,200,500,300);
                 inventoryPanel.add(scrollPane2);
+            } else if (event.getSource() == HomePanel.availableMedsLabel){
+
             }
         }
     }
@@ -287,5 +292,15 @@ class NewMedPanel extends JPanel{
         add(addToInvenButton);
 
         setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
+    }
+}
+class LabelDialogues extends JDialog{
+    JScrollPane dialogTable;
+    JButton okButton;
+    LabelDialogues(DefaultTableModel table2){
+        JTable medicationsTable;
+        JPanel tablePanel = new JPanel();
+        dialogTable = new JScrollPane(tablePanel);
+
     }
 }
