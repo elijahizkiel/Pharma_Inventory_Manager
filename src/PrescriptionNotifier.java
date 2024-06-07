@@ -24,19 +24,32 @@ public class PrescriptionNotifier implements Callable<ArrayList<String>>, Serial
 
     private void connect(){
         try{
-            connection = DriverManager.getConnection(location);
+
+            System.out.print("Reached Here hello check test 1111111111 connection now");
+
+            System.out.println("Connection" + connection);
+                connection = DriverManager.getConnection(location);
+
+            System.out.println("Connection" + connection);
         }catch (SQLException e){
             System.out.println("PrescriptionNotifier can't connect to Database " + e.getMessage());
         }
     }
 
     private ResultSet getTable(){
+        System.out.print("Reached Here hello check");
         this.connect();
+        System.out.print("Reached Here hello check test last");
         prescriber.createTable();
+        System.out.print("Reached Here hello check not last the last" );
         ResultSet result = null;
+        System.out.print("Reached Here hello check 12");
         try{
+
+            System.out.println("Result List"+ result);
             Statement statement = connection.createStatement();
              result = statement.executeQuery("SELECT * FROM PrescriptionsRecords");
+            System.out.println("Result List"+ result);
 
         }catch(SQLException e){
             System.out.println("can't get PrescriptionsRecords table from Notifier " + e.getMessage());
@@ -75,9 +88,11 @@ public class PrescriptionNotifier implements Callable<ArrayList<String>>, Serial
 
 
     private @NotNull Map<String, Medication> getPrescriptions(){
+        System.out.print("Reached Here 12");
         Map<String, Medication> prescriptions = new HashMap<>();
-         ResultSet newPrescriptions = this.getTable();
+        ResultSet newPrescriptions = this.getTable();
         if (newPrescriptions != null) System.out.println("I got the table");
+        System.out.print("Reached Here   last");
         try{
             while(newPrescriptions.next()){
                 Prescription prescription = new Prescription(newPrescriptions.getString("prescriptionNumber"),
@@ -102,6 +117,7 @@ public class PrescriptionNotifier implements Callable<ArrayList<String>>, Serial
     }
 
     public ArrayList<String> call(){
+        System.out.print("Reached Here 3");
         ArrayList<String> prescriptionStrings = new ArrayList<>();
         Map<String, Medication> prescriptions = this.getPrescriptions();
         if(!prescriptions.isEmpty()) System.out.println("i got prescriptions");
@@ -110,6 +126,7 @@ public class PrescriptionNotifier implements Callable<ArrayList<String>>, Serial
             prescriptionStrings.add(prescription1.toString());
             if(prescription.getValue() != null)System.out.println(prescription1.toString());
         }
+        System.out.println("I got the prescriptions" + prescriptionStrings);
         return prescriptionStrings;
     }
 }

@@ -30,7 +30,11 @@ public class Prescriber implements DataBaseModifierAndAccessor {
     @Override
     public void createTable() {
         try {
+            System.out.print("Reached Here hello check test 1111111111");
+            System.out.println("Connection found" + connection);
+            this.connect();
             Statement tableCreator = connection.createStatement();
+            System.out.print("Reached Here hello check test 1111111111");
             tableCreator.execute("CREATE TABLE IF NOT EXISTS PrescriptionsRecords(prescriptionNumber " +
                     "TEXT, dateAndTime BIGINT, nameOfMedication TEXT, dosageForm TEXT," +
                     " strength INTEGER, dose TEXT,amount INTEGER, isDispensed BOOLEAN)");
@@ -85,21 +89,6 @@ public class Prescriber implements DataBaseModifierAndAccessor {
 
         } catch (SQLException e) {
             System.out.println("can't create statement hello " + e.getMessage());
-        }  finally {
-            // Close resources in the reverse order of their creation
-            try {
-                if (result != null) {
-                    result.close();
-                }
-                if (isExistQuery != null) {
-                    isExistQuery.close();
-                }
-                if (connection != null) {
-                    connection.close();
-                }
-            } catch (SQLException e) {
-                System.out.println("Error closing resources: " + e.getMessage());
-            }
         }
         System.out.println("successfully checked if medication is in inventory");
         return isInInventory;

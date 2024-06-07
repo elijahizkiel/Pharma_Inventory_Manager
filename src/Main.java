@@ -218,8 +218,11 @@ public class Main extends JFrame {
             PrescriptionNotifier prescriptionNotifier = new PrescriptionNotifier("jdbc:sqlite:..DBMAtrial.db");
              ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
              AtomicReference<ArrayList<String>> prescriptionsList = new AtomicReference<>();
+             System.out.print("Reached Here");
              executorService.scheduleAtFixedRate(()->{
+                 System.out.print("Reached Here 1");
                  ArrayList<String> prescriptions = prescriptionNotifier.call();
+                 System.out.println("Reached Here Prescriptions" + prescriptions);
                  prescriptionsList.set(prescriptions);
              },0,10, TimeUnit.SECONDS);
 

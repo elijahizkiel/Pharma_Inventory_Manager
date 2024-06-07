@@ -21,7 +21,7 @@ public class PrescriberGUI extends JFrame {
     JScrollPane prescriptionPane = new JScrollPane(containerPanel);
 
     public PrescriberGUI(){
-        JLabel label =new JLabel("Welcome to Yekatit 12 Pharmacy Prescription Center!");
+        JLabel label =new JLabel("Welcome to Our Pharmacy Prescription Center!");
         label.setIcon(logoImage);
         imagePanel.add(label);
         imagePanel.setBorder(border);
