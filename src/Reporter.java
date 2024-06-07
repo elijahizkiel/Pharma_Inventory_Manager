@@ -8,6 +8,7 @@ import org.jetbrains.annotations.*;
 
 import java.io.*;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Objects;
 
 //Gives information or reports information about medications in stock and how much is purchased
@@ -18,8 +19,10 @@ import java.util.Objects;
 public class Reporter implements DataBaseModifierAndAccessor {
 
     Connection connection = null;
-    String location ="jdbc:sqlite:.InventoryManager.db";
-    Reporter(){}
+    String location;
+    Reporter(){
+        location ="jdbc:sqlite:.InventoryManager.db";
+    }
     Reporter(String location){
         this.location = location;
     }
@@ -27,6 +30,7 @@ public class Reporter implements DataBaseModifierAndAccessor {
     //creates pdf with table to represent the DB table
 
      void pdfGenerator(String name, String nameOfTable){
+        this.connect();
         Document document = new Document();
         String fileName = name +".pdf";
         try{
@@ -59,13 +63,33 @@ public class Reporter implements DataBaseModifierAndAccessor {
 
 
     // reports how many are dispensed
-    ResultSet showDispensed (){
+    Object[][] showDispensed (){
         /*
         * returns paired set of prescribed items and count  */
         this.connect();
         Dispenser dispenser = new Dispenser(location);
-        return dispenser.showTopDispensed();
+        return formTable(dispenser.showTopDispensed());
     }
+
+    private Object[][] formTable(@NotNull ResultSet tableData){
+        ArrayList<Object[]> tableData2 = new ArrayList<>();
+        int rowNumb = 1;
+        try{
+            while(tableData.next()) {
+                Object[] rowData = {rowNumb,tableData.getString("nameOfMedication"), tableData.getString("dosageForm"),
+                        tableData.getInt("strength"), (tableData.getInt(4))};
+                tableData2.add(rowData);
+            }
+        }catch(SQLException e){
+            System.out.println("can't form medsInCount table " + e.getMessage());
+        }
+        Object[][] table = new Object[tableData2.size()][];
+        for(int i = 0; i < tableData2.size(); ++i){
+            table[i] = tableData2.get(i);
+        }
+        return table;
+    }
+
 
     @Override
     public void connect() {
@@ -105,10 +129,10 @@ public class Reporter implements DataBaseModifierAndAccessor {
     public ResultSet runQuery(String query, String runner){
         ResultSet resultSet = null;
         this.connect();
-
         try{
             Statement statement = connection.createStatement();
             resultSet = statement.executeQuery(query);
+
         }catch(SQLException e){
             System.out.println("can't run the query" + e.getMessage());
         }

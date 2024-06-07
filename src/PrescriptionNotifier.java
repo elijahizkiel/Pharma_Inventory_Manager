@@ -12,14 +12,12 @@ import java.sql.*;
 
 public class PrescriptionNotifier implements Callable<ArrayList<String>>, Serializable {
     Connection connection = null;
-    String location;
+    String location = "jdbc:sqlite:.InventoryManager.db";
     long oldLastRowPointer;
     transient long newLastRowPointer;
     Prescriber prescriber = new Prescriber(location);
 
-    PrescriptionNotifier(){
-        location = "jdbc:sqlite:.InventoryManager.db";
-    }
+    PrescriptionNotifier(){}
     PrescriptionNotifier(String location){
         this.location = location;
     }

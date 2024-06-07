@@ -5,6 +5,8 @@ out/
 ...DBMAtrial.db
 .DBMAPrescribed.pdf
 .DBMADispensed.pdf
+.DBMAtrialDispensed.pdf
+.DBMAtrialPrescribed.pdf
 ### Eclipse ###
 .apt_generated
 .classpath

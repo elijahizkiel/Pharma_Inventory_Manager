@@ -15,22 +15,35 @@ public class BackEndTest {
         Registerer registerer = new Registerer("jdbc:sqlite:..DBMAtrial.db");
         ArrayList<Medication> medications = new ArrayList<>();
         medications.add(new NewlyPurchasedDrug("Diclofenac",500, "Suspension",new Date(2025, Calendar.MARCH,24),200));
-        medications.add(new NewlyPurchasedDrug("Paracetamol",500, "Suspension",new Date(2025,02,24),200));
-        medications.add(new NewlyPurchasedDrug("Diclofenac",250, "Suspension",new Date(2025,02,24),200));
-        medications.add(new NewlyPurchasedDrug("Paracetamol",250, "Suspension",new Date(2025,02,24),200));
-        medications.add(new NewlyPurchasedDrug("Diclofenac",500, "Tablet",new Date(2025,02,24),200));
-        medications.add(new NewlyPurchasedDrug("Paracetamol",500, "Tablet",new Date(2025,02,24),200));
-        medications.add(new NewlyPurchasedDrug("Diclofenac",500, "Suspension",new Date(2023,02,24),200));
-        medications.add(new NewlyPurchasedDrug("Diclofenac",500, "Tablet",new Date(2024,02,24),200));
-        medications.add(new NewlyPurchasedDrug("Paracetamol",250, "Tablet",new Date(2025,02,24),200));
-        medications.add(new NewlyPurchasedDrug("Paracetamol",250, "Tablet",new Date(2025,02,24),200));
+        medications.add(new NewlyPurchasedDrug("Paracetamol",500, "Suspension",new Date(2025,Calendar.FEBRUARY,24),200));
+        medications.add(new NewlyPurchasedDrug("Diclofenac",250, "Suspension",new Date(2025,Calendar.FEBRUARY,24),200));
+        medications.add(new NewlyPurchasedDrug("Paracetamol",250, "Suspension",new Date(2025,Calendar.FEBRUARY,24),200));
+        medications.add(new NewlyPurchasedDrug("Diclofenac",500, "Tablet",new Date(2025,Calendar.FEBRUARY,24),200));
+        medications.add(new NewlyPurchasedDrug("Paracetamol",500, "Tablet",new Date(2025,Calendar.FEBRUARY,24),200));
+        medications.add(new NewlyPurchasedDrug("Diclofenac",500, "Suspension",new Date(2023,Calendar.FEBRUARY,24),200));
+        medications.add(new NewlyPurchasedDrug("Diclofenac",500, "Tablet",new Date(2024,Calendar.FEBRUARY,24),200));
+        medications.add(new NewlyPurchasedDrug("Paracetamol",250, "Tablet",new Date(2025,Calendar.FEBRUARY,24),200));
+        medications.add(new NewlyPurchasedDrug("Paracetamol",250, "Tablet",new Date(2025,Calendar.FEBRUARY,24),200));
 
 
         registerer.register(medications);
 
         ArrayList<Prescription> prescriptions = getPrescriptionArrayList();
+        int[] truthValues = new int[5];
+        int i =0;
+        for(Prescription prescription: prescriptions){
+            if(prescription.verifyPrescription()) truthValues[i] = 1;
+            else truthValues[i] = 0;
+            System.out.println("verification values is: "+prescription.verifyPrescription());
+        }
+        for(int j: truthValues){
+            System.out.println(j);
+        }
+        for(Prescription prescription: prescriptions) {
+            if(prescription.verifyPrescription())DBMA.prescribe(prescription);
+            else System.out.println(prescription + " is not in the inventory");
+        }
 
-        DBMA.prescribe(prescriptions);
         DBMA2.dispense(prescriptions);
 
         System.out.println("******************************\n Prescribed Medications\n*********************");
@@ -65,28 +78,30 @@ public class BackEndTest {
         reporter.pdfGenerator("DBMADispensed","Dispense");
 
 
-        ResultSet dispenseCount = reporter.showDispensed();
-       try{
-           while(dispenseCount.next()){
-                   System.out.printf("%s   %-15s %-15d %d %n",dispenseCount.getString(1),dispenseCount.getString(2),dispenseCount.getInt(3),dispenseCount.getInt(4));
-           }
-       }catch(SQLException e){
-           System.out.println("can't get showDispensed " + e.getMessage());
-       }
+        Object[][] dispenseCount = reporter.showDispensed();
+
+           while(dispenseCount[0][0]!=null){
+               for(int j = 0; i<dispenseCount.length;++i){
+                   System.out.printf("%s   %-15s %-15d %d %n",dispenseCount[1],dispenseCount[2],dispenseCount[3],dispenseCount[4]);
+           }}
+
 
     }
 
     private static @NotNull ArrayList<Prescription> getPrescriptionArrayList() {
-        Prescription p1 = new Prescription("paracetamol", 500,"Suspension", "BID", 2,7);
-        Prescription p2 = new Prescription("paracetamol", 250,"Suspension", "BID", 2,7);
-        Prescription p3 = new Prescription("paracetamol", 500,"Tablet", "TID", 3,7);
-        Prescription p4 = new Prescription("paracetamol", 500,"Suspension", "BID", 2,7);
+        Prescription p1 = new Prescription("Paracetamol", 500,"Suspension", "BID", 2,7);
+        Prescription p2 = new Prescription("Paracetamol", 250,"Suspension", "BID", 2,7);
+        Prescription p3 = new Prescription("Paracetamol", 500,"Tablet", "TID", 3,7);
+        Prescription p4 = new Prescription("Paracetamol", 500,"Suspension", "BID", 2,7);
+        Prescription p5 = new Prescription("Paracetamol", 350,"Suspension", "BID", 2,7);
 
         ArrayList<Prescription> prescriptions = new ArrayList<>();
         prescriptions.add(p1);
         prescriptions.add(p2);
         prescriptions.add(p3);
         prescriptions.add(p4);
+        prescriptions.add(p5);
+
         return prescriptions;
     }
 }

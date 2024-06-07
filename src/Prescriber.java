@@ -3,64 +3,104 @@ import org.jetbrains.annotations.NotNull;
 import java.sql.*;
 import java.util.ArrayList;
 
-public class Prescriber implements DataBaseModifierAndAccessor{
+public class Prescriber implements DataBaseModifierAndAccessor {
     String location;
     Connection connection = null;
 
-    public Prescriber(){
+    public Prescriber() {
         location = "jdbc:sqlite:InventoryManager.db";
 
     }
-    public Prescriber(String location){
-         this.location = location;
-     }
+
+    public Prescriber(String location) {
+        this.location = location;
+    }
 
     @Override
     public void connect() {
-        try{
-            connection = DriverManager.getConnection(location);
-        }catch(SQLException e){
+        try {
+            if (connection == null) {
+                connection = DriverManager.getConnection(this.location);
+            }
+        } catch (SQLException e) {
             System.out.println("can't connect to Prescriber");
         }
     }
 
     @Override
-    public void createTable(){
+    public void createTable() {
         try {
             Statement tableCreator = connection.createStatement();
             tableCreator.execute("CREATE TABLE IF NOT EXISTS PrescriptionsRecords(prescriptionNumber " +
                     "TEXT, dateAndTime BIGINT, nameOfMedication TEXT, dosageForm TEXT," +
                     " strength INTEGER, dose TEXT,amount INTEGER, isDispensed BOOLEAN)");
-        } catch(SQLException e){
+        } catch (SQLException e) {
             System.out.println("can't create prescription table " + e.getMessage());
         }
     }
 
-    public void prescribe(@NotNull ArrayList<Prescription> items){
+    public void prescribe(Prescription prescription) {
         this.connect();
         this.createTable();
-        for (Prescription prescription: items){
-            insertCommand(prescription);}
+        insertCommand(prescription);
         System.out.println("Prescription is completed");
-        try{connection.close();}catch(SQLException e){
+        try {
+            connection.close();
+        } catch (SQLException e) {
             System.out.println("can't close connection" + e.getMessage());
         }
     }
 
-    public boolean isInStock(String nameOfMedication,int strength, String dosageForm ){
-        boolean isInInventory = false;
-        PreparedStatement isExistQuery;
+    public void prescribe(@NotNull ArrayList<Prescription> items) {
+        this.connect();
+        this.createTable();
+        for (Prescription prescription : items) {
+            insertCommand(prescription);
+        }
+        System.out.println("Prescription is completed");
         try {
-                isExistQuery = connection.prepareStatement("SELECT nameOfMedication, strength, dosageForm  FROM MedicationInStock WHERE nameOfMedication = ?, strength = ?, dosageForm = ?");
-                isExistQuery.setString(1, nameOfMedication);
-                isExistQuery.setInt(2,strength);
-                isExistQuery.setString(3,dosageForm);
-                ResultSet result = isExistQuery.executeQuery();
-                if(!result.isLast()) isInInventory = true;
-            }catch(SQLException e){
-                System.out.println("can't create statement " + e.getMessage());
-            }
+            connection.close();
+        } catch (SQLException e) {
+            System.out.println("can't close connection" + e.getMessage());
+        }
+    }
 
+    public boolean isInStock(Prescription prescription) {
+        boolean isInInventory = false;
+        this.connect();
+        ResultSet result= null;
+        PreparedStatement isExistQuery = null;
+        try {
+            isExistQuery = connection.prepareStatement("SELECT nameOfMedication, strength, dosageForm FROM MedicationInStock " +
+                    "WHERE nameOfMedication = ? AND strength = ? AND dosageForm = ?");
+            isExistQuery.setString(1, prescription.getNameOfMedication());
+            isExistQuery.setInt(2, prescription.getStrength());
+            isExistQuery.setString(3, prescription.getDosageForm());
+            result = isExistQuery.executeQuery();
+            if (result.next()) {
+                isInInventory = true;
+                System.out.println("Medication is found");
+                result.close();
+            } else System.out.println("No medication Found");
+
+        } catch (SQLException e) {
+            System.out.println("can't create statement hello " + e.getMessage());
+        }  finally {
+            // Close resources in the reverse order of their creation
+            try {
+                if (result != null) {
+                    result.close();
+                }
+                if (isExistQuery != null) {
+                    isExistQuery.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                System.out.println("Error closing resources: " + e.getMessage());
+            }
+        }
         System.out.println("successfully checked if medication is in inventory");
         return isInInventory;
     }
@@ -75,29 +115,38 @@ public class Prescriber implements DataBaseModifierAndAccessor{
             result = selectTableQuery.executeQuery("SELECT prescriptionNumber, nameOfMedication, strength, dosageForm, amount FROM PrescriptionsRecords");
         } catch (SQLException e) {
             System.out.println("can't get info from Prescription table " + e.getMessage());
+        }finally {
+            if ( connection != null){
+                try {
+                    connection.close();
+                }
+                catch(SQLException e) {
+                    System.out.println("can't close connection" + e.getMessage());
+                }
+            }
         }
         return result;
     }
 
     @Override
-    public void insertCommand(@NotNull Medication medication){
-        Prescription  prescription = (Prescription) medication;
+    public void insertCommand(@NotNull Medication medication) {
+        Prescription prescription = (Prescription) medication;
         PreparedStatement command;
         Timestamp nowTime = new Timestamp(System.currentTimeMillis());
         try {
             String querySet = "insert into PrescriptionsRecords values (?,?,?,?,?,?,?,?)";
             command = connection.prepareStatement(querySet);
-            command.setTimestamp(2,nowTime);
+            command.setTimestamp(2, nowTime);
             System.out.println("dateAndTime is set");
-            command.setString(1,prescription.getPrescriptionNumber());
+            command.setString(1, prescription.getPrescriptionNumber());
             System.out.println("prescriptionNumbers is set");
-            command.setString(3,prescription.getNameOfMedication());
+            command.setString(3, prescription.getNameOfMedication());
             System.out.println("nameOfMedication is set");
-            command.setString(4,prescription.getDosageForm());
+            command.setString(4, prescription.getDosageForm());
             System.out.println("dosageForm is set");
-            command.setInt(5,prescription.getStrength());
+            command.setInt(5, prescription.getStrength());
             System.out.println("strength is set");
-            command.setString(6,prescription.getDose());
+            command.setString(6, prescription.getDose());
             System.out.println("dose is set");
             command.setInt(7, prescription.getAmount());
             System.out.println("Amount is set");
@@ -105,9 +154,11 @@ public class Prescriber implements DataBaseModifierAndAccessor{
             System.out.println("Dispense status is set");
             command.executeUpdate();
             System.out.println("Data inserted");
-        } catch(SQLException exception) {
+        } catch (SQLException exception) {
             System.out.println(exception.getMessage());
         }
 
     }
+
+
 }

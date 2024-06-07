@@ -7,7 +7,7 @@
 import java.util.Date;
 
 public class NewlyPurchasedDrug extends Medication{
-    int amount = 0;
+    int amount;
 
     public NewlyPurchasedDrug(String nameOfMedication, int strength, String dosageForm, Date expireDate,int amount){
         super( nameOfMedication, strength, dosageForm, expireDate);

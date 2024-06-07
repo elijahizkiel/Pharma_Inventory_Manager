@@ -2,6 +2,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Timer;
 
 public class Registerer implements DataBaseModifierAndAccessor{
     Connection connection = null;
@@ -94,19 +95,21 @@ public class Registerer implements DataBaseModifierAndAccessor{
         }catch (SQLException e){
             System.out.println("can't get medsInCount table " + e.getMessage());
         }
-        return formTable(medsInCount);
+        assert medsInCount != null;
+        return formTable( medsInCount);
     }
 
     private Object[][] formTable(@NotNull ResultSet tableData){
         ArrayList<Object[]> tableData2 = new ArrayList<>();
+        int rowNumb = 1;
         try{
             while(tableData.next()) {
-                Object[] rowData = {tableData.getString("nameOfMedication"), tableData.getString("dosageForm"),
+                Object[] rowData = {rowNumb,tableData.getString("nameOfMedication"), tableData.getString("dosageForm"),
                         tableData.getInt("strength"), (tableData.getInt(4))};
                 tableData2.add(rowData);
             }
         }catch(SQLException e){
-            System.out.println("can't form medsIncount table " + e.getMessage());
+            System.out.println("can't form medsInCount table " + e.getMessage());
         }
         Object[][] table = new Object[tableData2.size()][];
         for(int i = 0; i < tableData2.size(); ++i){
@@ -115,12 +118,27 @@ public class Registerer implements DataBaseModifierAndAccessor{
         return table;
     }
 
-    public Object[][] medsInShortage(){
+    public Object[][] medsInLast7days(){
+        long now = System.currentTimeMillis();
+        ResultSet medsInLast7Days = null;
+        this.connect();
+        try{
+            Statement query = connection.createStatement();
+            medsInLast7Days = query.executeQuery("SELECT nameOfMedication, dosageForm, strength, count(*) FROM DispenseRecords Group By nameOfMedication, dosageForm, strength HAVING dateAndTime >=("+now+"-640800000)");
+        }catch(SQLException e){
+            System.out.println();
+        }
+        if(medsInLast7Days!= null)return formTable(medsInLast7Days);
+        else return new Object[5][4];
+    }
+
+    public Object[][] getMedsInShortage(){
         this.connect();
         ResultSet medsInShortage = null;
         try{
             Statement query = connection.createStatement();
-            medsInShortage = query.executeQuery("SELECT nameOfMedication, dosageForm, strength, sum(amount) FROM MedicationInStock GROUP BY nameOfMedication,dosageForm, strength HAVING sum(amount) <= 50;");
+            medsInShortage = query.executeQuery("SELECT nameOfMedication, dosageForm, strength, sum(amount)" +
+                    " FROM MedicationInStock GROUP BY nameOfMedication,dosageForm, strength HAVING sum(amount) <= 50;");
         }catch (SQLException e){
             System.out.println("can't get medsInShortage " + e.getMessage());
         }

@@ -10,7 +10,6 @@ import javax.swing.border.Border;
 public class PrescriberGUI extends JFrame {
     JPanel imagePanel = new JPanel();
     ImageIcon logoImage = new ImageIcon("C:\\Users\\Y.S\\IdeaProjects\\PharmacyInventoryManager\\src\\logo_yekatit.png");
-    Image image = logoImage.getImage();
     Border border = BorderFactory.createLineBorder(Color.BLUE);
 
     JButton addMedicationButton = new JButton("Add Medication");
@@ -69,7 +68,13 @@ public class PrescriberGUI extends JFrame {
             Prescription prescription = new Prescription(panel.nameOfMedication.getText(),Integer.parseInt(panel.strength.getText()),
                     panel.dosageForm.getText(),panel.dose.getText(),Integer.parseInt(panel.frequency.getText()),
                     Integer.parseInt(panel.duration.getText()));
-            prescriptions.add(prescription);
+            if(prescription.verifyPrescription()){
+                prescriptions.add(prescription);
+            }else{
+               JOptionPane prescriptionNotFound = new JOptionPane(prescription + " is not in Inventory, please write it on paper");
+               prescriptionNotFound.setVisible(true);
+               this.add(prescriptionNotFound);
+            }
         }
         return prescriptions;
     }
@@ -77,7 +82,9 @@ public class PrescriberGUI extends JFrame {
     private void prescribe(ArrayList<PrescribePanel> panels){
         ArrayList<Prescription> prescriptions = getPrescriptions(panels);
         Prescriber prescriber = new Prescriber("jdbc:sqlite:..DBMAtrial.db");
-        prescriber.prescribe(prescriptions);
+        for(Prescription prescription: prescriptions){
+            if(prescription.verifyPrescription())prescriber.prescribe(prescription);
+        }
     }
     public static void main(String[] args) {
         new PrescriberGUI();

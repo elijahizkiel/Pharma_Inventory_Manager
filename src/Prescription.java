@@ -12,7 +12,7 @@ public class Prescription extends Medication {
     private int duration;
     private final String prescriptionNumber;
     private boolean isDispensed = false;
-    Prescriber prescriber = new Prescriber();
+    Prescriber prescriber = new Prescriber("jdbc:sqlite:..DBMAtrial.db");
 
 
     public Prescription(String nameOfMedication, int strength,String dosageForm,String dose,int frequency, int duration ){
@@ -52,7 +52,7 @@ public class Prescription extends Medication {
     }
 
     boolean verifyPrescription(){
-        return prescriber.isInStock(this.getNameOfMedication(), this.getStrength(), this.getDosageForm());
+        return prescriber.isInStock(this);
     }
 
     public String getPrescriptionNumber() {
@@ -69,7 +69,8 @@ public class Prescription extends Medication {
 
     @Override
     public String toString() {
-        return super.getNameOfMedication() + super.getStrength() + super.getDosageForm() + dose + frequency + duration;
+        return super.getNameOfMedication() +" "+ super.getStrength()+" " + super.getDosageForm()
+                + " " + dose +" "+ frequency + " " + duration;
     }
 
 }
