@@ -50,10 +50,13 @@ public class BackEndTest {
 
         ResultSet resultSet1 = DBMA.getInfoFromTable();
         System.out.printf("%20s   %20s  %8s  %15s   %10s %n","PrescriptionNumber", "Name Of Medication", "Strength", "DosageForm", "Amount");
-        try{while(resultSet1.next()){
-             System.out.printf("%20s   %20s  %8d  %15s   %10d %n", resultSet1.getString(1),
-                     resultSet1.getString(2),resultSet1.getInt(3),
-                     resultSet1.getString(4),resultSet1.getInt(5));
+        try{
+            if(resultSet1 != null){
+                while(resultSet1.next()){
+                    System.out.printf("%20s   %20s  %8d  %15s   %10d %n", resultSet1.getString(1),
+                            resultSet1.getString(2),resultSet1.getInt(3),
+                            resultSet1.getString(4),resultSet1.getInt(5));
+                }
             }
         }catch (SQLException e){
             System.out.println("cant get info from PrescriptionRecords " + e.getMessage() );

@@ -6,10 +6,14 @@
   <component name="ChangeListManager">
     <list default="true" id="1738bcc0-6da0-4343-a5ea-0e6b391d00ce" name="Changes" comment="DataModifierAndAccessor changed into interface and added another classes">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DBMAPrescribed.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/DBMAPrescribed.pdf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/BackEndTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/BackEndTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Prescriber.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Prescriber.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/PrescriberGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/PrescriberGUI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Prescription.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Prescription.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/PrescriptionNotifier.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/PrescriptionNotifier.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Registerer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Registerer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Reporter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Reporter.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,31 +49,31 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.BackEndTest.executor&quot;: &quot;Run&quot;,
-    &quot;Application.DataBaseModifierAndAccessorTest.executor&quot;: &quot;Run&quot;,
-    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
-    &quot;Application.Prescriber.executor&quot;: &quot;Run&quot;,
-    &quot;Application.PrescriberGUI.executor&quot;: &quot;Run&quot;,
-    &quot;Application.Sample (1).executor&quot;: &quot;Run&quot;,
-    &quot;Application.Sample.executor&quot;: &quot;Run&quot;,
-    &quot;Application.TrialClass.executor&quot;: &quot;Run&quot;,
-    &quot;Downloaded.Files.Path.Enabled&quot;: &quot;false&quot;,
-    &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,
-    &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,
-    &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Y.S/IdeaProjects/MyOnlineShop&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.BackEndTest.executor": "Run",
+    "Application.DataBaseModifierAndAccessorTest.executor": "Run",
+    "Application.Main.executor": "Run",
+    "Application.Prescriber.executor": "Run",
+    "Application.PrescriberGUI.executor": "Run",
+    "Application.Sample (1).executor": "Run",
+    "Application.Sample.executor": "Run",
+    "Application.TrialClass.executor": "Run",
+    "Downloaded.Files.Path.Enabled": "false",
+    "Repository.Attach.Annotations": "false",
+    "Repository.Attach.JavaDocs": "false",
+    "Repository.Attach.Sources": "false",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/Y.S/IdeaProjects/MyOnlineShop",
+    "project.structure.last.edited": "Libraries",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2"
   }
-}</component>
+}]]></component>
   <component name="QodanaReportsService">
     <option name="descriptions">
       <ReportDescription localRun="true" path="C:\Users\Y.S\AppData\Local\Temp\qodana_output\qodana.sarif.json" reportGuid="17a66788-7024-48af-a7a5-e35d92ba4a4c" reportId="PharmacyInventoryManager/qodana/2024-06-05" />
@@ -117,8 +121,8 @@
     <recent_temporary>
       <list>
         <item itemvalue="Application.Main" />
-        <item itemvalue="Application.PrescriberGUI" />
         <item itemvalue="Application.BackEndTest" />
+        <item itemvalue="Application.PrescriberGUI" />
         <item itemvalue="Application.TrialClass" />
         <item itemvalue="Application.Sample" />
       </list>
@@ -229,24 +233,19 @@
           <properties class="java.lang.NullPointerException" package="java.lang" />
           <option name="timeStamp" value="16" />
         </breakpoint>
-        <line-breakpoint enabled="true" type="java-method">
-          <url>file://$PROJECT_DIR$/src/PrescriptionNotifier.java</url>
-          <line>89</line>
-          <properties class="PrescriptionNotifier" method="getPrescriptions">
-            <option name="EMULATED" value="true" />
-            <option name="WATCH_EXIT" value="false" />
-          </properties>
-          <option name="timeStamp" value="19" />
-        </line-breakpoint>
+        <breakpoint enabled="true" type="java-exception">
+          <properties class="java.lang.ArrayIndexOutOfBoundsException" package="java.lang" />
+          <option name="timeStamp" value="29" />
+        </breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/PrescriberGUI.java</url>
           <line>65</line>
           <option name="timeStamp" value="25" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/Main.java</url>
-          <line>413</line>
-          <option name="timeStamp" value="26" />
+          <url>file://$PROJECT_DIR$/src/PrescriptionNotifier.java</url>
+          <line>24</line>
+          <option name="timeStamp" value="35" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

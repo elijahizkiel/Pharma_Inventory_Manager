@@ -126,7 +126,7 @@ public class Reporter implements DataBaseModifierAndAccessor {
         return result;
     }
 
-    public ResultSet runQuery(String query, String runner){
+    public ResultSet runQuery(String query){
         ResultSet resultSet = null;
         this.connect();
         try{
@@ -138,5 +138,4 @@ public class Reporter implements DataBaseModifierAndAccessor {
         }
         return resultSet;
     }
-    //reports how many prescriptions are done in given time interval
 }

@@ -70,7 +70,7 @@ public class Prescription extends Medication {
     @Override
     public String toString() {
         return super.getNameOfMedication() +" "+ super.getStrength()+" " + super.getDosageForm()
-                + " " + dose +" "+ frequency + " " + duration;
+                + " " + dose +" "+ " " + duration;
     }
 
 }

@@ -1,15 +1,11 @@
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
+import java.io.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.text.*;
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -93,7 +89,6 @@ public class Main extends JFrame {
         }
     }
 
-
     protected class HomePanel extends JPanel{
         static JLabel availableMedsLabel,medsInShortageLabel, medsDispensedLabel, typeCountLabel, totalCountLabel;
         static JDialog availableMeds, medsInShortage, medsInLast7Days;
@@ -102,7 +97,7 @@ public class Main extends JFrame {
             ResultSet count = null;
             try {
 
-                count = reporter.runQuery("SELECT sum(amount) FROM MedicationInStock", "prescriber");
+                count = reporter.runQuery("SELECT sum(amount) FROM MedicationInStock");
             }catch(Exception e) {
                 System.out.println("can't send query");
             }
@@ -115,7 +110,7 @@ public class Main extends JFrame {
 
             ResultSet table = null;
             try{
-                table = reporter.runQuery("SELECT nameOfMedication, SUM(amount) FROM MedicationInStock GROUP BY nameOfMedication,dosageForm, strength","");
+                table = reporter.runQuery("SELECT nameOfMedication, SUM(amount) FROM MedicationInStock GROUP BY nameOfMedication,dosageForm, strength");
             }catch(Exception e){
                 System.out.println("Can't runQuery In group to get meds ");
             }
@@ -137,9 +132,7 @@ public class Main extends JFrame {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     if (e.getSource() == HomePanel.availableMedsLabel) {
-                        JScrollPane scrollPane = getTable("availableMedsLabel");
-
-                        availableMeds = new LabelDialog(scrollPane);
+                        availableMeds = new LabelDialog(getTable("availableMedsLabel"));
                         availableMeds.setVisible(true);
                     } ;
                 }
@@ -163,7 +156,7 @@ public class Main extends JFrame {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     if(e.getSource() == HomePanel.medsDispensedLabel){
-                        medsInLast7Days = new LabelDialog(getTable("medsDispensedLabel"));
+                        medsInLast7Days = new LabelDialog(getTable("medsDispensed"));
                         medsInLast7Days.setVisible(true);
                     }
                 }
@@ -215,16 +208,19 @@ public class Main extends JFrame {
         JList notDispensedList;
         public NotificationPanel(){
 
-            PrescriptionNotifier prescriptionNotifier = new PrescriptionNotifier("jdbc:sqlite:..DBMAtrial.db");
-             ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+            PrescriptionNotifier notifier=null;// = deserialize();
+            if(notifier == null) notifier = new PrescriptionNotifier("jdbc:sqlite:..DBMAtrial.db");
+            ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
              AtomicReference<ArrayList<String>> prescriptionsList = new AtomicReference<>();
-             System.out.print("Reached Here");
-             executorService.scheduleAtFixedRate(()->{
-                 System.out.print("Reached Here 1");
-                 ArrayList<String> prescriptions = prescriptionNotifier.call();
-                 System.out.println("Reached Here Prescriptions" + prescriptions);
+            PrescriptionNotifier finalNotifier = notifier;
+            PrescriptionNotifier finalNotifier1 = notifier;
+            System.out.println("going for thr thread");
+            executor.scheduleAtFixedRate(()->{
+                 ArrayList<String> prescriptions = finalNotifier.call();
+                System.out.println("my prescriptions: \n" + prescriptions);
                  prescriptionsList.set(prescriptions);
-             },0,10, TimeUnit.SECONDS);
+                 serialize(finalNotifier1);
+             },0,3, TimeUnit.SECONDS);
 
 
 
@@ -257,17 +253,40 @@ public class Main extends JFrame {
         static JButton downloadReportButton;
 
         public ReportsPanel(){
+            ResultSet countOfPrescriptions = reporter.runQuery("SELECT SUM(amount) FROM PrescriptionsRecords");
+            int prescriptionsCount = 0;
+            try{
+                prescriptionsCount = countOfPrescriptions.getInt("SUM(amount)");
+            }catch(SQLException ex){
+                System.out.println("from prescription count "+ex.getMessage());
+            }
+            ResultSet countOfDispenses = reporter.runQuery("SELECT  SUM(amount) FROM PrescriptionsRecords WHERE isDispensed = 1");
+            int dispenseCount = 0;
+            try{
+                dispenseCount = countOfDispenses.getInt("SUM(amount)");
+            }catch(SQLException ex){
+                System.out.println("from dispenses count " + ex.getMessage());
+            }
+            long date = System.currentTimeMillis();
+            ResultSet nearExpire = reporter.runQuery("SELECT nameOfMedication, strength, dosageForm, expireDate, count(*) FROM MedicationInStock WHERE ((" + date + " -expireDate) <7776000000)");
+            int nearToExpire=0;
+            try{
+                nearToExpire = nearExpire.getInt("count(*)");
+            }catch (SQLException ex){
+                System.out.println("from near to expire "+ ex.getMessage());
+            }
+
             downloadReportButton = new JButton("Download Report(in .pdf)");
             downloadReportButton.setBounds(800,25,180,20);
             downloadReportButton.addActionListener(new MyActionListener());
 
-            countOfPrescribedMeds = new FrontLabel("<html> Total medications <br>Prescribed</html>");
+            countOfPrescribedMeds = new FrontLabel("<html> Total medications <br>Prescribed: "+prescriptionsCount+"</html>");
             countOfPrescribedMeds.setBounds(50,100,250,200);
 
-            countOfDispensedMeds = new FrontLabel("<html> Total medications<br> Dispensed</html>");
+            countOfDispensedMeds = new FrontLabel("<html> Total medications<br> Dispensed:"+dispenseCount+"</html>");
             countOfDispensedMeds.setBounds(400,100,250,200);
 
-            nearToExpireMeds = new FrontLabel("<html> Medications Near ExpireDate: <br>"+"</html>");
+            nearToExpireMeds = new FrontLabel("<html> Medications Near ExpireDate: <br>"+nearToExpire+"</html>");
             nearToExpireMeds.setBounds(750,100,250,200);
 
             medsInInventory = new FrontLabel("<html>Count of Medications<br> In Inventory</html>");
@@ -280,78 +299,113 @@ public class Main extends JFrame {
             add(downloadReportButton);
             setLayout(null);
         }
+
     }
 
     public static void main(String[] args) {
         new Main();
     }
+    private static void serialize(Object object){
+        try(FileOutputStream fileOut = new FileOutputStream("notify.ser");
+        ObjectOutputStream outObj = new ObjectOutputStream(fileOut)){
+            outObj.writeObject(object);
+        }
+        catch(IOException IOe){
+            System.out.println("from serialize method " + IOe.getMessage());
+        }
+    }
+
+    private static PrescriptionNotifier deserialize(){
+        PrescriptionNotifier notifier =  null;
+        try(FileInputStream fileIn = new FileInputStream("notify.ser");
+        ObjectInputStream inObj = new ObjectInputStream(fileIn))
+        {
+            notifier = (PrescriptionNotifier) inObj.readObject();
+        }catch(IOException|ClassNotFoundException CNF){
+            System.out.println("from deserialize Method" + CNF.getMessage());
+        }
+        return notifier;
+    }
     private JScrollPane getTable(String requester){
         JTable table;
         JScrollPane scrollPane1;
-        if(Objects.equals(requester,"inventoryPanel")){
-            Object[][] tableData = reporter.showDispensed();
-            if(tableData[0][0] != null){
-                String[] tableHeader = {"No","Name Of Medication", "Dosage Form","Strength", "Frequency"};
+        switch (requester) {
+            case "inventoryPanel" -> {
+                Object[][] tableData = reporter.showDispensed();
+                if (tableData[0][0] != null) {
+                    String[] tableHeader = {"No", "Name Of Medication", "Dosage Form", "Strength", "Frequency"};
 
 
-                table = new JTable(tableData,tableHeader);
-                table.getColumnModel().getColumn(0).setPreferredWidth(5);
-                table.setFillsViewportHeight(true);
-                table.setRowHeight(30);
-                scrollPane1 = new JScrollPane(table);
+                    table = new JTable(tableData, tableHeader);
+                    table.getColumnModel().getColumn(0).setPreferredWidth(5);
+                    table.setFillsViewportHeight(true);
+                    table.setRowHeight(30);
+                    scrollPane1 = new JScrollPane(table);
 
-        }else {
-               JLabel label = new JLabel("No Record of Dispensed Medications");
-               label.setFont(new Font("Arial",Font.BOLD,30));
-               label.setForeground(Color.WHITE);
-               label.setBackground(new Color(50,25,25,200));
-               scrollPane1 = new JScrollPane(label);
+                } else {
+                    JLabel label = new JLabel("No Record of Dispensed Medications");
+                    label.setFont(new Font("Arial", Font.BOLD, 30));
+                    label.setForeground(Color.WHITE);
+                    label.setBackground(new Color(50, 25, 25, 200));
+                    scrollPane1 = new JScrollPane(label);
+                }
             }
-        } else if (Objects.equals(requester,"availableMedsLabel")) {
-            Object[][] tableData = new Registerer("jdbc:sqlite:..DBMAtrial.db").getMedsInCount();
-            Object[] tableHeader = {"No","Name Of Medication", "Dosage Form", "Strength(mg or mg/ml)", "Amount(count)"};
-            if(tableData[0][0] != null){
-                table = new JTable(tableData,tableHeader);
-                table.getColumnModel().getColumn(0).setPreferredWidth(5);
-                table.setFillsViewportHeight(true);
-                table.setRowHeight(30);
-                scrollPane1 = new JScrollPane(table);
+            case "availableMedsLabel" -> {
+                Object[][] tableData = new Registerer("jdbc:sqlite:..DBMAtrial.db").getMedsInCount();
+                Object[] tableHeader = {"No", "Name Of Medication", "Dosage Form", "Strength(mg or mg/ml)", "Amount(count)"};
+                if (tableData[0][0] != null) {
+                    table = new JTable(tableData, tableHeader);
+                    table.getColumnModel().getColumn(0).setPreferredWidth(5);
+                    table.setFillsViewportHeight(true);
+                    table.setRowHeight(30);
+                    scrollPane1 = new JScrollPane(table);
 
-            }else {
-                JLabel label = new JLabel("No Medications are available");
-                label.setFont(new Font("Arial",Font.BOLD,30));
-                label.setForeground(Color.WHITE);
-                label.setBackground(new Color(50,25,25,200));
-                scrollPane1 = new JScrollPane(label);
+                } else {
+                    JLabel label = new JLabel("No Medications are available");
+                    label.setFont(new Font("Arial", Font.BOLD, 30));
+                    label.setForeground(Color.WHITE);
+                    label.setBackground(new Color(50, 25, 25, 200));
+                    scrollPane1 = new JScrollPane(label);
+                }
             }
-        } else if (Objects.equals(requester,"medsInShortage")) {
-            Object[][] tableData = new Registerer("jdbc:sqlite:..DBMAtrial.db").getMedsInShortage();
-            Object[] tableHeader = {"No","Name of Medications", "Dosage Form", "Strength", "Amount"};
-            if(tableData[0][0] != null){
+            case "medsInShortage" -> {
+                Object[][] tableData;
+                Object[] tableHeader = {"No", "Name of Medications", "Dosage Form", "Strength", "Amount"};
+                if(registerer.getMedsInShortage() != null)
+                    tableData = registerer.getMedsInShortage();
+                else tableData = new Object[2][5];
+                if (tableData != null) {
+                    table = new JTable(tableData, tableHeader);
+                    table.getColumnModel().getColumn(0).setPreferredWidth(5);
+                    table.setFillsViewportHeight(true);
+                    table.setRowHeight(30);
+                    scrollPane1 = new JScrollPane(table);
 
-
-                table = new JTable(tableData,tableHeader);
-                table.getColumnModel().getColumn(0).setPreferredWidth(5);
-                table.setFillsViewportHeight(true);
-                table.setRowHeight(30);
-                scrollPane1 = new JScrollPane(table);
-
-            }else {
-                JLabel label = new JLabel("No Record of Dispensed Medications");
-                label.setFont(new Font("Arial",Font.BOLD,30));
-                label.setForeground(Color.WHITE);
-                label.setBackground(new Color(50,25,25,200));
-                scrollPane1 = new JScrollPane(label);
+                } else {
+                    JLabel label = new JLabel("No Record of Dispensed Medications");
+                    label.setFont(new Font("Arial", Font.BOLD, 30));
+                    label.setForeground(Color.WHITE);
+                    label.setBackground(new Color(50, 25, 25, 200));
+                    scrollPane1 = new JScrollPane(label);
+                }
             }
-        } else if (Objects.equals(requester,"medsDispensed")) {
-            Object[][] rowData = registerer.medsInLast7days();
-            Object[] tableHeader ={"No","Name of Medication","Dosage Form", "Strength", "Amount"};
-            table = new JTable(rowData,tableHeader);
-            scrollPane1 = new JScrollPane(table);
+            case "medsDispensed" -> {
+                Object[][] rowData = registerer.medsInLast7days();
+                Object[] tableHeader = {"No", "Name of Medication", "Dosage Form", "Strength", "Amount"};
+
+                if(rowData[0][0] != null){
+                    table = new JTable(rowData, tableHeader);
+                    scrollPane1 = new JScrollPane(table);
+                }else{
+                    JLabel messageLabel = new JLabel("No medications dispensed in the last 7 days");
+                    scrollPane1 = new JScrollPane(messageLabel);
+                }
+            }
+            case null, default -> scrollPane1 = new JScrollPane(new JLabel("No Data to display"));
         }
-        else scrollPane1 = new JScrollPane(new JLabel("No Data to display"));
         return scrollPane1;
 }
+
 
 class FrontLabel extends JLabel{
     public FrontLabel(String title){

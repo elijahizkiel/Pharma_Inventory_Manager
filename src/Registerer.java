@@ -104,7 +104,7 @@ public class Registerer implements DataBaseModifierAndAccessor{
         int rowNumb = 1;
         try{
             while(tableData.next()) {
-                Object[] rowData = {rowNumb,tableData.getString("nameOfMedication"), tableData.getString("dosageForm"),
+                Object[] rowData = {rowNumb++,tableData.getString("nameOfMedication"), tableData.getString("dosageForm"),
                         tableData.getInt("strength"), (tableData.getInt(4))};
                 tableData2.add(rowData);
             }
@@ -124,12 +124,16 @@ public class Registerer implements DataBaseModifierAndAccessor{
         this.connect();
         try{
             Statement query = connection.createStatement();
-            medsInLast7Days = query.executeQuery("SELECT nameOfMedication, dosageForm, strength, count(*) FROM DispenseRecords Group By nameOfMedication, dosageForm, strength HAVING dateAndTime >=("+now+"-640800000)");
+            medsInLast7Days = query.executeQuery("SELECT nameOfMedication, dosageForm, strength, count(*) FROM DispenseRecords Group By nameOfMedication, dosageForm, strength HAVING dateAndTime >= ("+now+"-640800000)");
         }catch(SQLException e){
-            System.out.println();
+            System.out.println(e.getMessage());
         }
-        if(medsInLast7Days!= null)return formTable(medsInLast7Days);
-        else return new Object[5][4];
+        if(medsInLast7Days!= null){
+            return formTable(medsInLast7Days);
+        }
+        else {
+            return new Object[5][4];
+        }
     }
 
     public Object[][] getMedsInShortage(){

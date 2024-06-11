@@ -29,8 +29,8 @@ public class Prescriber implements DataBaseModifierAndAccessor {
 
     @Override
     public void createTable() {
+        System.out.println("trying to create table");
         try {
-            System.out.print("Reached Here hello check test 1111111111");
             System.out.println("Connection found" + connection);
             this.connect();
             Statement tableCreator = connection.createStatement();
