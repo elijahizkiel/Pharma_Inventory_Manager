@@ -76,7 +76,7 @@ public class Reporter implements DataBaseModifierAndAccessor {
         int rowNumb = 1;
         try{
             while(tableData.next()) {
-                Object[] rowData = {rowNumb,tableData.getString("nameOfMedication"), tableData.getString("dosageForm"),
+                Object[] rowData = {rowNumb++,tableData.getString("nameOfMedication"), tableData.getString("dosageForm"),
                         tableData.getInt("strength"), (tableData.getInt(4))};
                 tableData2.add(rowData);
             }

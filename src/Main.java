@@ -104,9 +104,7 @@ public class Main extends JFrame {
             int sum = 0;
             try{
                 if(count != null)sum = count.getInt(1);
-            }catch(SQLException e){
-                System.out.println("can't sum-up amount");
-            }
+            }catch(SQLException e){System.out.println("can't sum-up amount");}
 
             ResultSet table = null;
             try{
@@ -117,9 +115,10 @@ public class Main extends JFrame {
             int counter = 0;
             try {
                 while (true){
-                    assert table != null;
-                    if (!table.next()) break;
-                    ++counter;
+                    if(table != null){
+                        if (!table.next()) break;
+                        ++counter;
+                    }
                 }
             }catch (SQLException e){
                 System.out.println(e.getMessage());
@@ -251,7 +250,10 @@ public class Main extends JFrame {
         JLabel nearToExpireMeds;
         JLabel medsInInventory;
         static JButton downloadReportButton;
-
+        LabelDialog prescriptionsDialog;
+        LabelDialog dispenseDialog;
+        LabelDialog expiredMedsDialog;
+        LabelDialog medsInInventoryDialog;
         public ReportsPanel(){
             ResultSet countOfPrescriptions = reporter.runQuery("SELECT SUM(amount) FROM PrescriptionsRecords");
             int prescriptionsCount = 0;
@@ -282,15 +284,75 @@ public class Main extends JFrame {
 
             countOfPrescribedMeds = new FrontLabel("<html> Total medications <br>Prescribed: "+prescriptionsCount+"</html>");
             countOfPrescribedMeds.setBounds(50,100,250,200);
+            countOfPrescribedMeds.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    ResultSet prescriptions = reporter.runQuery("SELECT nameOfMedication, strength, dosageForm, count(*) FROM PrescriptionsRecords GROUP BY nameOfMedication, strength, dosageForm");
+                    Object[][] prescriptionData = registerer.formTable(prescriptions);
+                    Object[] title = {"No", "Name of medication", "Strength", "Dosage Form","Frequency"};
+                    JTable prescriptionsTable = new JTable(prescriptionData,title);
+                    if(e.getSource() == countOfPrescribedMeds){
+                        JScrollPane prescriptionsScroll = new JScrollPane(prescriptionsTable);
+                        prescriptionsDialog = new LabelDialog(prescriptionsScroll);
+                        prescriptionsDialog.setVisible(true);
+                    }
+                }
+            });
 
             countOfDispensedMeds = new FrontLabel("<html> Total medications<br> Dispensed:"+dispenseCount+"</html>");
             countOfDispensedMeds.setBounds(400,100,250,200);
+            countOfDispensedMeds.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    ResultSet dispenses = reporter.runQuery("SELECT nameOfMedication, strength, dosageForm, count(*)" +
+                            " FROM DispenseRecords GROUP BY nameOfMedication, strength, dosageForm");
+                    Object[][] dispenseData = registerer.formTable(dispenses);
+                    Object[] title = {"No", "Name of medication", "Strength", "Dosage Form","Frequency"};
+                    JTable prescriptionsTable = new JTable(dispenseData,title);
+                    if(e.getSource() == countOfDispensedMeds){
+                        JScrollPane dispenseScroll = new JScrollPane(prescriptionsTable);
+                        dispenseDialog = new LabelDialog(dispenseScroll);
+                        dispenseDialog.setVisible(true);
+                    }
+                }
+            });
 
             nearToExpireMeds = new FrontLabel("<html> Medications Near ExpireDate: <br>"+nearToExpire+"</html>");
             nearToExpireMeds.setBounds(750,100,250,200);
+            nearToExpireMeds.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    ResultSet nearToExpire = reporter.runQuery("SELECT nameOfMedication, strength, dosageForm, count(*) " +
+                            "FROM MedicationInStock GROUP BY nameOfMedication,strength, dosageForm, expireDate " +
+                            "HAVING ((" + date + "-expireDate) < 7776000000)");
+                    Object[][] medicationData = registerer.formTable(nearToExpire);
+                    Object[] title = {"No", "Name of medication", "Strength", "Dosage Form","Frequency"};
+                    JTable expireMedsTable = new JTable(medicationData,title);
+                    if(e.getSource() == nearToExpireMeds){
+                        JScrollPane nearToExpireMedsScroll = new JScrollPane(expireMedsTable);
+                        expiredMedsDialog = new LabelDialog(nearToExpireMedsScroll);
+                        expiredMedsDialog.setVisible(true);
+                    }
+                }
+            });
 
             medsInInventory = new FrontLabel("<html>Count of Medications<br> In Inventory</html>");
             medsInInventory.setBounds(250,400,500,100);
+            medsInInventory.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    ResultSet inventoryMeds = reporter.runQuery("SELECT nameOfMedication, strength, dosageForm, count(*) " +
+                            "FROM MedicationInStock GROUP BY nameOfMedication,strength, dosageForm, expireDate ");
+                    Object[][] medicationData = registerer.formTable(inventoryMeds);
+                    Object[] title = {"No", "Name of medication", "Strength", "Dosage Form","Frequency"};
+                    JTable inventoryMedsTable = new JTable(medicationData,title);
+                    if(e.getSource() == medsInInventory){
+                        JScrollPane inventoryMedsScroll = new JScrollPane(inventoryMedsTable);
+                        medsInInventoryDialog = new LabelDialog(inventoryMedsScroll);
+                        medsInInventoryDialog.setVisible(true);
+                    }
+                }
+            });
 
             add(countOfPrescribedMeds);
             add(countOfDispensedMeds);
@@ -326,6 +388,7 @@ public class Main extends JFrame {
         }
         return notifier;
     }
+
     private JScrollPane getTable(String requester){
         JTable table;
         JScrollPane scrollPane1;
@@ -334,7 +397,6 @@ public class Main extends JFrame {
                 Object[][] tableData = reporter.showDispensed();
                 if (tableData[0][0] != null) {
                     String[] tableHeader = {"No", "Name Of Medication", "Dosage Form", "Strength", "Frequency"};
-
 
                     table = new JTable(tableData, tableHeader);
                     table.getColumnModel().getColumn(0).setPreferredWidth(5);
@@ -376,7 +438,7 @@ public class Main extends JFrame {
                 else tableData = new Object[2][5];
                 if (tableData != null) {
                     table = new JTable(tableData, tableHeader);
-                    table.getColumnModel().getColumn(0).setPreferredWidth(5);
+                    table.getColumnModel().getColumn(0).setWidth(5);
                     table.setFillsViewportHeight(true);
                     table.setRowHeight(30);
                     scrollPane1 = new JScrollPane(table);
@@ -470,7 +532,7 @@ class LabelDialog extends JDialog{
     public static JButton okButton = new JButton("OK");
     LabelDialog(JScrollPane scrollPane){
         dialogTable = scrollPane;
-        dialogTable.setBounds(5,5,400,300);
+        dialogTable.setBounds(5,5,450,300);
 
         okButton.setBounds(190,310,70,20);
         okButton.addActionListener(new Main.MyActionListener());
@@ -478,7 +540,7 @@ class LabelDialog extends JDialog{
         setSize(new Dimension(410,380));
         add(dialogTable);
         add(okButton);
-
+        setBounds(100,20,500,350);
         setLayout(null);
     }
 }}

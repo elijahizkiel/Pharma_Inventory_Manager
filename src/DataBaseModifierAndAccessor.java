@@ -4,9 +4,9 @@ import java.sql.*;
 
 public interface DataBaseModifierAndAccessor {
 
-
          void connect();
-        void createTable();
+
+         void createTable();
 
         void insertCommand(@NotNull Medication medication);
 
