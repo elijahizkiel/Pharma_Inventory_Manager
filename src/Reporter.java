@@ -29,33 +29,47 @@ public class Reporter implements DataBaseModifierAndAccessor {
     //uses iText to create pdf report
     //creates pdf with table to represent the DB table
 
-     void pdfGenerator(String name, String nameOfTable){
+    public void pdfGenerator(String name, String nameOfTable) {
         this.connect();
         Document document = new Document();
-        String fileName = name +".pdf";
-        try{
+        String fileName = name + ".pdf";
+
+        try {
             PdfWriter.getInstance(document, new FileOutputStream(fileName));
             document.open();
 
-            PdfPTable table = new PdfPTable(5);
             ResultSet resultSet = this.getInfoFromTable(nameOfTable);
+            int count = resultSet.getMetaData().getColumnCount();
 
-           try{
-               int count = resultSet.getMetaData().getColumnCount();
-               while( resultSet.next()){
-                for(int i = 0; i < count; ++i ){
-                    table.addCell(new PdfPCell(new Paragraph(resultSet.getString(i + 1))));
+            PdfPTable table = new PdfPTable(count); // Adjust the number of columns as needed
+
+            // Add table headers
+            for (int i = 1; i <= count; i++) {
+                table.addCell(new PdfPCell(new Paragraph(resultSet.getMetaData().getColumnName(i))));
+            }
+
+            // Add table data
+            while (resultSet.next()) {
+                for (int i = 1; i <= count; i++) {
+                    table.addCell(new PdfPCell(new Paragraph(resultSet.getString(i))));
                 }
-                document.add(table);
-               System.out.println("data successfully added to the pdf");
-               }
-           }catch(SQLException e){
-               System.out.println("can't access data from table " + e.getMessage() );
-           }
-        }catch (DocumentException | FileNotFoundException e){
-            System.out.println(e.getMessage());
+            }
+
+            document.add(table);
+            System.out.println("Data successfully added to the PDF");
+
+        } catch (DocumentException | FileNotFoundException | SQLException e) {
+            System.out.println("Error generating PDF: " + e.getMessage());
+        } finally {
+            document.close();
+            try {
+                if (connection != null && !connection.isClosed()) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                System.out.println("Error closing connection: " + e.getMessage());
+            }
         }
-         document.close();
     }
 
     //reports how many are disposed due to expire date
