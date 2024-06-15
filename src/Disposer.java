@@ -58,4 +58,21 @@ public class Disposer implements DataBaseModifierAndAccessor{
     public ResultSet getInfoFromTable() {
         return null;
     }
+
+    private void removeFromInventory(Medication med){
+        this.connect();
+        try{
+            Statement deleteStatement = connection.createStatement();
+            deleteStatement.execute("DELETE FROM MedicationInStock WHERE nameOfMedication = " + med.getNameOfMedication()
+                    + ", strength = " +med.getStrength() +", expireDate = " + med.getExpireDate() +
+                    "purchaseNumber = " + med.getPurchaseNumber() +" ,dosageForm = " + med.getDosageForm());
+        }catch(SQLException e){
+            System.out.println("from Disposer can't delete medication " + e.getMessage());
+        }
+    }
+    public void dispose(DisposedMed med){
+        this.connect();
+        this.insertCommand(med);
+        removeFromInventory(med);
+    }
 }

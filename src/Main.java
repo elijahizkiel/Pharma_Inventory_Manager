@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import javax.swing.*;
 import java.text.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -161,10 +162,10 @@ public class Main extends JFrame {
                 }
             });
 
-            totalCountLabel = new FrontLabel("<html>Count of total available <br> medications: "+ sum+"</html>");
+            totalCountLabel = new FrontLabel("<html>Count of total available <br> medications: " + sum + "</html>");
             totalCountLabel.setBounds(100, 300, 400, 150);
 
-            typeCountLabel = new FrontLabel("<html>Count of medications by<br> their name and form and strength: "+ counter + "</html>");
+            typeCountLabel = new FrontLabel("<html>Count of medications by<br> their name and form and strength: " + counter + "</html>");
             typeCountLabel.setBounds(550, 300, 400, 150);
 
             //setting home panel
@@ -202,36 +203,51 @@ public class Main extends JFrame {
     protected static class NotificationPanel extends JPanel{
         JSplitPane splitPane1;
         JSplitPane splitPane2;
-        JList newPrescriptionList;
-        JList expiredMedList;
-        JList notDispensedList;
+        JPanel newPrescriptionList;
+        JPanel expiredMedList;
+        JPanel notDispensedList;
         public NotificationPanel(){
 
-            PrescriptionNotifier notifier=null;// = deserialize();
-            if(notifier == null) notifier = new PrescriptionNotifier("jdbc:sqlite:..DBMAtrial.db");
+            PrescriptionNotifier notifier;// = deserialize();
+            //if(notifier == null)
+                notifier = new PrescriptionNotifier("jdbc:sqlite:..DBMAtrial.db");
             ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
              AtomicReference<ArrayList<String>> prescriptionsList = new AtomicReference<>();
             PrescriptionNotifier finalNotifier = notifier;
-            PrescriptionNotifier finalNotifier1 = notifier;
-            System.out.println("going for thr thread");
-            executor.scheduleAtFixedRate(()->{
+           // PrescriptionNotifier finalNotifier1 = notifier;
+            System.out.println("going for  thread");
+            ScheduledFuture<?> future=  executor.scheduleAtFixedRate(()->{
                  ArrayList<String> prescriptions = finalNotifier.call();
                 System.out.println("my prescriptions: \n" + prescriptions);
                  prescriptionsList.set(prescriptions);
-                 serialize(finalNotifier1);
-             },0,3, TimeUnit.SECONDS);
+                 serialize(finalNotifier);
+             },3,3, TimeUnit.SECONDS);
+//
+//            ArrayList<String> prescriptions = null;
+//            try{
+//                if(future.get() != null) prescriptions = (ArrayList<String>) future.get();
+//            }catch (ExecutionException | InterruptedException ex){
+//                System.out.println("from thread " + ex.getMessage());
+//            }
+//
+//            System.out.println("prescriptions from ScheduledFuture = " + prescriptions);
+//
+//            ArrayList<JLabel> prescriptionLabels = new ArrayList<>();
+//            assert prescriptions != null;
+//            for(String prescription : prescriptions){
+//                JLabel label = new JLabel(prescription);
+//                prescriptionLabels.add(label);
+//            }
 
-
-
-            expiredMedList = new JList<>();
+            expiredMedList = new JPanel();
             JScrollPane expiredListScroll = new JScrollPane(expiredMedList);
             expiredListScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
-            notDispensedList= new JList<>();
+            notDispensedList= new JPanel();
             JScrollPane notDispensedListScroll = new JScrollPane(notDispensedList);
             notDispensedListScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
-            newPrescriptionList = new JList<>();
+            newPrescriptionList = new JPanel();
             JScrollPane newPrescriptionListScroll = new JScrollPane(newPrescriptionList);
             newPrescriptionListScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
@@ -282,7 +298,7 @@ public class Main extends JFrame {
             downloadReportButton.setBounds(800,25,180,20);
             downloadReportButton.addActionListener(new MyActionListener());
 
-            countOfPrescribedMeds = new FrontLabel("<html> Total medications <br>Prescribed: "+prescriptionsCount+"</html>");
+            countOfPrescribedMeds = new FrontLabel("<html> Total medications <br>Prescribed: " + prescriptionsCount + "</html>");
             countOfPrescribedMeds.setBounds(50,100,250,200);
             countOfPrescribedMeds.addMouseListener(new MouseAdapter() {
                 @Override
@@ -299,7 +315,7 @@ public class Main extends JFrame {
                 }
             });
 
-            countOfDispensedMeds = new FrontLabel("<html> Total medications<br> Dispensed:"+dispenseCount+"</html>");
+            countOfDispensedMeds = new FrontLabel("<html> Total medications<br> Dispensed:" + dispenseCount + "</html>");
             countOfDispensedMeds.setBounds(400,100,250,200);
             countOfDispensedMeds.addMouseListener(new MouseAdapter() {
                 @Override
@@ -317,7 +333,7 @@ public class Main extends JFrame {
                 }
             });
 
-            nearToExpireMeds = new FrontLabel("<html> Medications Near ExpireDate: <br>"+nearToExpire+"</html>");
+            nearToExpireMeds = new FrontLabel("<html> Medications Near ExpireDate: <br>" + nearToExpire + "</html>");
             nearToExpireMeds.setBounds(750,100,250,200);
             nearToExpireMeds.addMouseListener(new MouseAdapter() {
                 @Override
@@ -454,7 +470,7 @@ public class Main extends JFrame {
             case "medsDispensed" -> {
                 Object[][] rowData = registerer.medsInLast7days();
                 Object[] tableHeader = {"No", "Name of Medication", "Dosage Form", "Strength", "Amount"};
-
+                System.out.println(Arrays.deepToString(rowData));
                 if(rowData[0][0] != null){
                     table = new JTable(rowData, tableHeader);
                     scrollPane1 = new JScrollPane(table);
@@ -469,7 +485,7 @@ public class Main extends JFrame {
 }
 
 
-class FrontLabel extends JLabel{
+static class FrontLabel extends JLabel{
     public FrontLabel(String title){
         super(title);
         setFont(new Font("Serif",Font.BOLD,30));
@@ -479,7 +495,8 @@ class FrontLabel extends JLabel{
         setOpaque(true);
     }
 }
-class NewMedPanel extends JPanel{
+
+static class NewMedPanel extends JPanel{
     static JTextField nameOfMedication,strength,dosageForm, date,amount;
     static JLabel nameLabel,strengthLabel, formLabel, dateLabel,amountLabel;
     static JButton addToInventButton, doneButton;
@@ -527,6 +544,7 @@ class NewMedPanel extends JPanel{
         setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
     }
 }
+
 class LabelDialog extends JDialog{
     JScrollPane dialogTable;
     public static JButton okButton = new JButton("OK");
@@ -544,3 +562,5 @@ class LabelDialog extends JDialog{
         setLayout(null);
     }
 }}
+
+class NotificationSlide {}

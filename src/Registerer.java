@@ -2,6 +2,7 @@ import org.jetbrains.annotations.*;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Registerer implements DataBaseModifierAndAccessor {
     Connection connection = null;
@@ -57,7 +58,7 @@ public class Registerer implements DataBaseModifierAndAccessor {
             command.executeUpdate();
             System.out.println("Data inserted");
         } catch (SQLException exception) {
-            System.out.println(exception.getMessage());
+            System.out.println("from registerer can't data to table " + exception.getMessage());
         }
 
     }
@@ -104,20 +105,41 @@ public class Registerer implements DataBaseModifierAndAccessor {
     Object[][] formTable(@NotNull ResultSet tableData) {
         ArrayList<Object[]> tableData2 = new ArrayList<>();
         int rowNumb = 1;
+
         try {
-            while (tableData.next()) {
-                Object[] rowData = {rowNumb++, tableData.getString("nameOfMedication"), tableData.getString("dosageForm"),
-                        tableData.getInt("strength"), (tableData.getInt(4))};
-                tableData2.add(rowData);
+            // Check if the result set is empty before processing
+            if (!tableData.next()) {
+                System.out.println("The table is empty.");
+                return new Object[5][4]; // Return default empty table
             }
+
+            // Process the first row (since tableData.next() was already called)
+            do {
+                Object[] rowData = {
+                        rowNumb++,
+                        tableData.getString("nameOfMedication"),
+                        tableData.getString("dosageForm"),
+                        tableData.getInt("strength"),
+                        tableData.getInt(4)  // Assuming column 4 is an int
+                };
+                tableData2.add(rowData);
+                System.out.println("rowData: " + Arrays.toString(rowData));
+            } while (tableData.next());
+
         } catch (SQLException e) {
             System.out.println("can't form medsInCount table " + e.getMessage());
         }
+
+        System.out.println("size of tableData2 array = " + tableData2.size());
         Object[][] table = new Object[tableData2.size()][];
         for (int i = 0; i < tableData2.size(); ++i) {
+            System.out.println(Arrays.toString(tableData2.get(i)));
             table[i] = tableData2.get(i);
         }
-        return table;
+        System.out.println("table\n" + Arrays.deepToString(table));
+
+        // Return the table if it's not empty, otherwise return the default table
+        return table.length > 0 ? table : new Object[5][4];
     }
 
     public Object[][] medsInLast7days() {
@@ -130,12 +152,19 @@ public class Registerer implements DataBaseModifierAndAccessor {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        if (medsInLast7Days != null) {
-            return formTable(medsInLast7Days);
-        } else {
-            return new Object[5][4];
-        }
+        System.out.println(medsInLast7Days);
+
+        try {
+            while (medsInLast7Days.next()) {
+                System.out.println(medsInLast7Days);
+            }
+        }catch(SQLException ex){
+            System.out.println("from medsInLast7Days: " + ex.getMessage());}
+        System.out.println(medsInLast7Days);
+                return formTable(medsInLast7Days);
     }
+
+
 
     public Object[][] getMedsInShortage() {
         this.connect();
@@ -149,8 +178,5 @@ public class Registerer implements DataBaseModifierAndAccessor {
         }
         if (medsInShortage != null) return formTable(medsInShortage);
         else return new Object[5][4];
-    }
-    public void dispose(){
-        this.connect();
     }
 }
