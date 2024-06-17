@@ -11,7 +11,6 @@ public class DisposedMed extends Medication{
         this.amount = amount;
     }
 
-    @Override
     public String getPurchaseNumber() {
         return purchaseNumber;
     }
@@ -20,7 +19,6 @@ public class DisposedMed extends Medication{
         return amount;
     }
 
-    @Override
     public String getReasonToDispose() {
         return reasonToDispose;
     }

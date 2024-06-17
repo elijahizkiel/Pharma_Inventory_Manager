@@ -59,8 +59,9 @@ public class Disposer implements DataBaseModifierAndAccessor{
         return null;
     }
 
-    private void removeFromInventory(Medication med){
+    private void removeFromInventory(Medication medication){
         this.connect();
+        DisposedMed med = (DisposedMed) medication;
         try{
             Statement deleteStatement = connection.createStatement();
             deleteStatement.execute("DELETE FROM MedicationInStock WHERE nameOfMedication = " + med.getNameOfMedication()

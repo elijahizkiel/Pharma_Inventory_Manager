@@ -1,5 +1,3 @@
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Date;
 
 public abstract class Medication {
@@ -7,8 +5,6 @@ public abstract class Medication {
     private final int strength;
     private final String dosageForm;
     protected Date expireDate;
-    private String purchaseNumber;
-    private String reasonToDispose;
 
     public Medication(String nameOfMedication, int strength, String dosageForm, Date expireDate){
         this.nameOfMedication = nameOfMedication;
@@ -37,13 +33,5 @@ public abstract class Medication {
 
     public Date getExpireDate() {
         return expireDate;
-    }
-
-    public String getPurchaseNumber() {
-        return purchaseNumber;
-    }
-
-    public String getReasonToDispose() {
-        return reasonToDispose;
     }
 }

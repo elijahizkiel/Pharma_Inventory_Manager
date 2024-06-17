@@ -20,11 +20,14 @@ public class Reporter implements DataBaseModifierAndAccessor {
 
     Connection connection = null;
     String location;
+    Prescriber prescriber;
     Reporter(){
-        location ="jdbc:sqlite:.InventoryManager.db";
+        this.location ="jdbc:sqlite:.InventoryManager.db";
+        prescriber = new Prescriber(this.location);
     }
     Reporter(String location){
         this.location = location;
+        prescriber = new Prescriber(this.location);
     }
     //uses iText to create pdf report
     //creates pdf with table to represent the DB table
@@ -47,17 +50,19 @@ public class Reporter implements DataBaseModifierAndAccessor {
             for (int i = 1; i <= count; i++) {
                 table.addCell(new PdfPCell(new Paragraph(resultSet.getMetaData().getColumnName(i))));
             }
-
+            boolean hasData = false;
             // Add table data
             while (resultSet.next()) {
+                hasData = true;
                 for (int i = 1; i <= count; i++) {
                     table.addCell(new PdfPCell(new Paragraph(resultSet.getString(i))));
                 }
             }
 
-            document.add(table);
-            System.out.println("Data successfully added to the PDF");
-
+            if(hasData) {
+                document.add(table);
+                System.out.println("Data successfully added to the PDF");
+            }
         } catch (DocumentException | FileNotFoundException | SQLException e) {
             System.out.println("Error generating PDF: " + e.getMessage());
         } finally {
@@ -128,7 +133,6 @@ public class Reporter implements DataBaseModifierAndAccessor {
     public ResultSet getInfoFromTable(String nameOfTable){
          ResultSet result = null;
          if(Objects.equals(nameOfTable,"Prescribe")){
-             Prescriber prescriber = new Prescriber(location);
              result = prescriber.getInfoFromTable();
          } else if (Objects.equals(nameOfTable, "Dispense")) {
              Dispenser dispenser = new Dispenser(location);

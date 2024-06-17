@@ -23,7 +23,7 @@ public class Prescriber implements DataBaseModifierAndAccessor {
                 connection = DriverManager.getConnection(this.location);
             }
         } catch (SQLException e) {
-            System.out.println("can't connect to Prescriber");
+            System.out.println("can't connect to Prescriber " + e.getMessage());
         }
     }
 
@@ -37,7 +37,7 @@ public class Prescriber implements DataBaseModifierAndAccessor {
             System.out.print("Reached Here hello check test 1111111111");
             tableCreator.execute("CREATE TABLE IF NOT EXISTS PrescriptionsRecords(prescriptionNumber " +
                     "TEXT, dateAndTime BIGINT, nameOfMedication TEXT, dosageForm TEXT," +
-                    " strength INTEGER, dose TEXT,amount INTEGER, isDispensed BOOLEAN)");
+                    " strength INTEGER, dose TEXT,amount INTEGER,duration INT, isDispensed BOOLEAN)");
         } catch (SQLException e) {
             System.out.println("can't create prescription table " + e.getMessage());
         }
@@ -101,18 +101,9 @@ public class Prescriber implements DataBaseModifierAndAccessor {
             this.connect();
             Statement selectTableQuery = connection.createStatement();
 
-            result = selectTableQuery.executeQuery("SELECT prescriptionNumber, nameOfMedication, strength, dosageForm, amount FROM PrescriptionsRecords");
+            result = selectTableQuery.executeQuery("SELECT prescriptionNumber, nameOfMedication, strength, dosageForm, amount, duration FROM PrescriptionsRecords");
         } catch (SQLException e) {
             System.out.println("can't get info from Prescription table " + e.getMessage());
-        }finally {
-            if ( connection != null){
-                try {
-                    connection.close();
-                }
-                catch(SQLException e) {
-                    System.out.println("can't close connection" + e.getMessage());
-                }
-            }
         }
         return result;
     }
@@ -123,7 +114,7 @@ public class Prescriber implements DataBaseModifierAndAccessor {
         PreparedStatement command;
         Timestamp nowTime = new Timestamp(System.currentTimeMillis());
         try {
-            String querySet = "insert into PrescriptionsRecords values (?,?,?,?,?,?,?,?)";
+            String querySet = "insert into PrescriptionsRecords values (?,?,?,?,?,?,?,?,?)";
             command = connection.prepareStatement(querySet);
             command.setTimestamp(2, nowTime);
             System.out.println("dateAndTime is set");
@@ -139,7 +130,9 @@ public class Prescriber implements DataBaseModifierAndAccessor {
             System.out.println("dose is set");
             command.setInt(7, prescription.getAmount());
             System.out.println("Amount is set");
-            command.setBoolean(8, prescription.isDispensed());
+            command.setInt(8,prescription.getDuration());
+            System.out.println("Duration is set");
+            command.setBoolean(9, prescription.isDispensed());
             System.out.println("Dispense status is set");
             command.executeUpdate();
             System.out.println("Data inserted");

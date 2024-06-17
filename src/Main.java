@@ -203,41 +203,97 @@ public class Main extends JFrame {
 
         JPanel newPrescriptionList;
         JPanel expiredMedList;
-        public NotificationPanel(){
+        ArrayList<Prescription> prescriptionsList = new ArrayList<>();
+        JButton getNewPrescriptionsButton = new JButton("<html>Get new <br>Prescriptions</html>");
+        JButton getListOfExpiredMeds = new JButton("<html>Get Newly <br>Expired Medications</html>");
+        JScrollPane newPrescriptionListScroll;
+        GridBagConstraints gridConstr = new GridBagConstraints();
+        ArrayList<JLabel> prescriptionLabels = new ArrayList<>();
+        public NotificationPanel() {
+            JLabel headerLabel =new JLabel("Prescriptions");
+            headerLabel.setFont(new Font("Serif",Font.BOLD,20));
+            newPrescriptionList = new JPanel();
+            GridBagLayout layout = new GridBagLayout();
 
-            PrescriptionNotifier notifier;// = deserialize();
-            //if(notifier == null)
-                notifier = new PrescriptionNotifier("jdbc:sqlite:..DBMAtrial.db");
-            ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-             ArrayList<Prescription> prescriptionsList = new ArrayList<>();
-            PrescriptionNotifier finalNotifier = notifier;
+            newPrescriptionList.setLayout(layout);
+            newPrescriptionList.add(headerLabel);
+            newPrescriptionList.setSize(400,500);
 
-            System.out.println("going for  thread");
-            executor.scheduleAtFixedRate(()->{
-                 ArrayList<Prescription> prescriptions = finalNotifier.call();
-                System.out.println("my prescriptions: \n" + prescriptions);
-                if(!prescriptions.isEmpty()){
-                    prescriptionsList.addAll(prescriptions);
-                }
-                 serialize(finalNotifier);
-             },0,3, TimeUnit.SECONDS);
-
+            newPrescriptionListScroll = new JScrollPane(newPrescriptionList);
+            newPrescriptionListScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+            newPrescriptionListScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+            newPrescriptionListScroll.setBounds(40,20,400,500);
 
             expiredMedList = new JPanel();
             JScrollPane expiredListScroll = new JScrollPane(expiredMedList);
             expiredListScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+            expiredListScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+            expiredListScroll.setBounds(480,20,400,500);
+            getNewPrescriptionsButton.setBounds(900,50, 150,40);
+            getListOfExpiredMeds.setBounds(900,110, 150,40);
 
+            getNewPrescriptionsButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    setPrescriptionsList();
+                    addLabels(prescriptionsList);
+                }
+            });
 
-            newPrescriptionList = new JPanel();
-            JScrollPane newPrescriptionListScroll = new JScrollPane(newPrescriptionList);
-            newPrescriptionListScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-
+            add(getNewPrescriptionsButton);
+            add(getListOfExpiredMeds);
             add(newPrescriptionListScroll);
             add(expiredListScroll);
             setLayout(null);
         }
 
+        public void setPrescriptionsList() {
+            PrescriptionNotifier notifier;// = deserialize();
+            //if(notifier == null)
+            notifier = new PrescriptionNotifier("jdbc:sqlite:..DBMAtrial.db");
 
+            System.out.println("going for  thread");
+
+            ArrayList<Prescription> prescriptions = notifier.call();
+            System.out.println("my prescriptions: \n" + prescriptions);
+            if (!prescriptions.isEmpty()) {
+                prescriptionsList.addAll(prescriptions);
+            }
+            serialize(notifier);
+        }
+
+
+        void addLabels(Prescription prescription){
+            JLabel newLabel = new JLabel(prescription.toString());
+            newLabel.setBackground(new Color(65, 142, 224));
+            newLabel.setFont(new Font("Serif",Font.BOLD,17));
+            newLabel.setOpaque(true);
+            newLabel.setMinimumSize(new Dimension(300,30));
+            newLabel.setPreferredSize(new Dimension(400,35));
+            newLabel.setBorder(BorderFactory.createLineBorder(new Color(190,200,200),8));
+
+            ++gridConstr.gridy;
+//            gridConstr.fill = GridBagConstraints.HORIZONTAL;
+//            gridConstr.anchor = GridBagConstraints.NORTH;
+
+            prescriptionLabels.add(newLabel);
+            newPrescriptionList.add(newLabel,gridConstr);
+            revalidate();
+        }
+
+        void addLabels(ArrayList<Prescription> prescriptions){
+            for(Prescription prescription : prescriptions){
+                System.out.println("adding Labels .....");
+                addLabels(prescription);
+            }
+        }
+        public void addAll(ArrayList<JLabel> comps, Container container){
+            if(!comps.isEmpty()){
+                for(JComponent comp : comps){
+                    container.add(comp);
+                }
+            }
+        }
     }
 
     protected class ReportsPanel extends JPanel{

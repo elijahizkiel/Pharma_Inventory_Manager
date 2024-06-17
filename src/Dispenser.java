@@ -26,7 +26,7 @@ public class Dispenser implements DataBaseModifierAndAccessor{
         try {
             Statement tableCreator = connection.createStatement();
             tableCreator.execute("CREATE TABLE IF NOT EXISTS DispenseRecords(dateAndTime BIGINT,prescriptionNumber TEXT," +
-                    " nameOfMedication TEXT, dosageForm TEXT, strength INTEGER, dose TEXT)");//dispensingNumber TEXT, is to be added.
+                    " nameOfMedication TEXT, dosageForm TEXT, strength INTEGER, dose TEXT, amount INT)");//dispensingNumber TEXT, is to be added.
         } catch(SQLException e){
             System.out.println("can't create table " + e.getMessage());
         }
@@ -38,13 +38,13 @@ public class Dispenser implements DataBaseModifierAndAccessor{
         PreparedStatement command;
         Timestamp nowTime = new Timestamp(System.currentTimeMillis());
         try {
-            String querySet = "insert into DispenseRecords values (?,?,?,?,?,?)";
+            String querySet = "insert into DispenseRecords values (?,?,?,?,?,?,?)";
             command = connection.prepareStatement(querySet);
+            command.setTimestamp(1,nowTime);
+            System.out.println("dateAndTime is set");
             command.setString(2,prescription.getPrescriptionNumber());
             //System.out.println("dispenseNumber is set ");
             System.out.println("prescriptionNumbers is set");
-            command.setTimestamp(1,nowTime);
-            System.out.println("dateAndTime is set");
             command.setString(3,prescription.getNameOfMedication());
             System.out.println("nameOfMedication is set");
             command.setString(4,prescription.getDosageForm());
@@ -53,6 +53,7 @@ public class Dispenser implements DataBaseModifierAndAccessor{
             System.out.println("strength is set");
             command.setString(6,prescription.getDose());
             System.out.println("dose is set");
+            command.setInt(7,prescription.getDuration());
             command.executeUpdate();
             System.out.println("Data inserted");
         } catch(SQLException exception) {
@@ -61,12 +62,11 @@ public class Dispenser implements DataBaseModifierAndAccessor{
     }
 
 
-    public void dispense(@NotNull ArrayList prescriptions){
+    public void dispense(@NotNull ArrayList<Prescription> prescriptions){
         this.connect();
         this.createTable();
         if (!(prescriptions.isEmpty())) {
-            for (Object prescript : prescriptions) {
-                Prescription prescription = (Prescription) prescript;
+            for (Prescription prescription : prescriptions) {
                 insertCommand(prescription);
                 updateDispenseStatus(prescription);
             }

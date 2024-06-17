@@ -67,10 +67,14 @@ public class Prescription extends Medication {
         return isDispensed;
     }
 
+    public int getDuration() {
+        return duration;
+    }
+
     @Override
     public String toString() {
         return super.getNameOfMedication() +" "+ super.getStrength()+" " + super.getDosageForm()
-                + " " + dose +" "+ " " + duration;
+                + " " + dose +" "+ " " + duration+ "days";
     }
 
 }

@@ -94,9 +94,12 @@ public class PrescriberGUI extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent e){
-            if (e.getSource() == addMedicationButton) addMedication(); else if (e.getSource() == prescribeButton) prescribe(panels);
+            if (e.getSource() == addMedicationButton) addMedication();
+            else if (e.getSource() == prescribeButton) prescribe(panels);
         }
     }
+
+//    private class
 }
 class PrescribePanel extends JPanel {
     JTextField nameOfMedication = new JTextField(),strength =new JTextField();

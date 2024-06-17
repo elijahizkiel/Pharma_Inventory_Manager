@@ -84,8 +84,8 @@ public class BackEndTest {
         Object[][] dispenseCount = reporter.showDispensed();
 
            while(dispenseCount[0][0]!=null){
-               for(int j = 0; i<dispenseCount.length;++i){
-                   System.out.printf("%s   %-15s %-15d %d %n",dispenseCount[1],dispenseCount[2],dispenseCount[3],dispenseCount[4]);
+               for(int j = 0; j<dispenseCount.length;++j){
+                   System.out.println(""+dispenseCount[j][0]+dispenseCount[j][1]+dispenseCount[j][2]+dispenseCount[j][3]);
            }}
 
 
