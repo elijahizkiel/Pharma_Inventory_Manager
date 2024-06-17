@@ -8,7 +8,6 @@ import java.text.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 
 public class Main extends JFrame {
@@ -201,63 +200,44 @@ public class Main extends JFrame {
     }
 
     protected static class NotificationPanel extends JPanel{
-        JSplitPane splitPane1;
-        JSplitPane splitPane2;
+
         JPanel newPrescriptionList;
         JPanel expiredMedList;
-        JPanel notDispensedList;
         public NotificationPanel(){
 
             PrescriptionNotifier notifier;// = deserialize();
             //if(notifier == null)
                 notifier = new PrescriptionNotifier("jdbc:sqlite:..DBMAtrial.db");
             ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-             AtomicReference<ArrayList<String>> prescriptionsList = new AtomicReference<>();
+             ArrayList<Prescription> prescriptionsList = new ArrayList<>();
             PrescriptionNotifier finalNotifier = notifier;
-           // PrescriptionNotifier finalNotifier1 = notifier;
+
             System.out.println("going for  thread");
-            ScheduledFuture<?> future=  executor.scheduleAtFixedRate(()->{
-                 ArrayList<String> prescriptions = finalNotifier.call();
+            executor.scheduleAtFixedRate(()->{
+                 ArrayList<Prescription> prescriptions = finalNotifier.call();
                 System.out.println("my prescriptions: \n" + prescriptions);
-                 prescriptionsList.set(prescriptions);
+                if(!prescriptions.isEmpty()){
+                    prescriptionsList.addAll(prescriptions);
+                }
                  serialize(finalNotifier);
-             },3,3, TimeUnit.SECONDS);
-//
-//            ArrayList<String> prescriptions = null;
-//            try{
-//                if(future.get() != null) prescriptions = (ArrayList<String>) future.get();
-//            }catch (ExecutionException | InterruptedException ex){
-//                System.out.println("from thread " + ex.getMessage());
-//            }
-//
-//            System.out.println("prescriptions from ScheduledFuture = " + prescriptions);
-//
-//            ArrayList<JLabel> prescriptionLabels = new ArrayList<>();
-//            assert prescriptions != null;
-//            for(String prescription : prescriptions){
-//                JLabel label = new JLabel(prescription);
-//                prescriptionLabels.add(label);
-//            }
+             },0,3, TimeUnit.SECONDS);
+
 
             expiredMedList = new JPanel();
             JScrollPane expiredListScroll = new JScrollPane(expiredMedList);
             expiredListScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
-            notDispensedList= new JPanel();
-            JScrollPane notDispensedListScroll = new JScrollPane(notDispensedList);
-            notDispensedListScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
             newPrescriptionList = new JPanel();
             JScrollPane newPrescriptionListScroll = new JScrollPane(newPrescriptionList);
             newPrescriptionListScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
-            splitPane1 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,newPrescriptionListScroll,notDispensedListScroll);
-            splitPane2 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, splitPane1,expiredListScroll);
-
-            splitPane2.setBounds(50,50,1050,400);
-            add(splitPane2);
+            add(newPrescriptionListScroll);
+            add(expiredListScroll);
             setLayout(null);
         }
+
+
     }
 
     protected class ReportsPanel extends JPanel{

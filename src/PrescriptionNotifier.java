@@ -10,7 +10,7 @@ import java.util.concurrent.Callable;
 import java.sql.*;
 
 
-public class PrescriptionNotifier implements Callable<ArrayList<String>>, Serializable {
+public class PrescriptionNotifier implements Callable<ArrayList<Prescription>>, Serializable {
     transient Connection connection = null;
     String location = "jdbc:sqlite:.InventoryManager.db";
     long oldLastRowPointer = 259200000;
@@ -129,19 +129,19 @@ public class PrescriptionNotifier implements Callable<ArrayList<String>>, Serial
         }
     }
 
-    public ArrayList<String> call(){
-        ArrayList<String> prescriptionStrings = new ArrayList<>();
+    public ArrayList<Prescription> call(){
+        ArrayList<Prescription> newPrescriptions = new ArrayList<>();
         System.out.println("going for getting prescriptions");
         Map<String, Medication> prescriptions = this.getPrescriptions();
         System.out.println("returned from getPrescriptions");
         if(!prescriptions.isEmpty()) {
             for (Map.Entry<String,Medication> prescription:prescriptions.entrySet()){
                 Prescription prescription1 =(Prescription) prescription.getValue();
-                prescriptionStrings.add(prescription1.toString());
+                newPrescriptions.add(prescription1);
                 if(prescription.getValue() != null)System.out.println(prescription1);
             }
         }
-        return prescriptionStrings;
+        return newPrescriptions;
     }
 
 }
