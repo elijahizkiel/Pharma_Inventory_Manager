@@ -58,7 +58,7 @@ public class Registerer implements DataBaseModifierAndAccessor {
             command.executeUpdate();
             System.out.println("Data inserted");
         } catch (SQLException exception) {
-            System.out.println("from registerer can't data to table " + exception.getMessage());
+            System.out.println("from registerer can't add data to table " + exception.getMessage());
         }
 
     }
@@ -154,17 +154,9 @@ public class Registerer implements DataBaseModifierAndAccessor {
         }
         System.out.println(medsInLast7Days);
 
-        try {
-            while (medsInLast7Days.next()) {
-                System.out.println(medsInLast7Days);
-            }
-        }catch(SQLException ex){
-            System.out.println("from medsInLast7Days: " + ex.getMessage());}
-        System.out.println(medsInLast7Days);
-                return formTable(medsInLast7Days);
+        if(medsInLast7Days!= null)return formTable(medsInLast7Days);
+        else return new Object[4][5];
     }
-
-
 
     public Object[][] getMedsInShortage() {
         this.connect();

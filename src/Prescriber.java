@@ -1,11 +1,12 @@
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
 import java.sql.*;
 import java.util.ArrayList;
 
-public class Prescriber implements DataBaseModifierAndAccessor {
+public class Prescriber implements DataBaseModifierAndAccessor, Serializable {
     String location;
-    Connection connection = null;
+    transient Connection connection = null;
 
     public Prescriber() {
         location = "jdbc:sqlite:InventoryManager.db";

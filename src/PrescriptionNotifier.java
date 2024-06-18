@@ -12,18 +12,22 @@ import java.sql.*;
 
 public class PrescriptionNotifier implements Callable<ArrayList<Prescription>>, Serializable {
     transient Connection connection = null;
-    String location;
+    private String location;
     long oldLastRowPointer = 259200000;
     transient long newLastRowPointer;
-    transient Prescriber prescriber;
+    Prescriber prescriber = new Prescriber(this.location);
 
     PrescriptionNotifier(){
         location = "jdbc:sqlite:.InventoryManager.db";
-        prescriber = new Prescriber(this.location);
+
     }
     PrescriptionNotifier(String location){
         this.location = location;
         prescriber = new Prescriber(this.location);
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     private void connect(){
@@ -62,8 +66,7 @@ public class PrescriptionNotifier implements Callable<ArrayList<Prescription>>, 
         try{
             Statement statement = connection.createStatement();
             System.out.println(connection);
-            result = statement.executeQuery("SELECT * FROM PrescriptionsRecords WHERE dateAndTime >= " + time + ";");
-            System.out.println(result);
+            result = statement.executeQuery("SELECT * FROM PrescriptionsRecords WHERE isDispensed = 0, dateAndTime >= " + time + ";");
         }catch(SQLException e){
             System.out.println("can't get PrescriptionsRecords table " + e.getMessage());
         }
@@ -104,7 +107,7 @@ public class PrescriptionNotifier implements Callable<ArrayList<Prescription>>, 
 
          if(oldLastRowPointer < newLastRowPointer) {
         newPrescriptions = this.getTable(oldLastRowPointer);
-//         oldLastRowPointer = newLastRowPointer;
+         oldLastRowPointer = newLastRowPointer;
              System.out.println(newPrescriptions);}
 //        ResultSet newPrescriptions = this.getTable();
         System.out.println(newPrescriptions);
@@ -115,7 +118,7 @@ public class PrescriptionNotifier implements Callable<ArrayList<Prescription>>, 
                     Prescription prescription = new Prescription(newPrescriptions.getString("prescriptionNumber"),
                             newPrescriptions.getString("nameOfMedication"),newPrescriptions.getInt("strength"),
                             newPrescriptions.getString("dosageForm"),newPrescriptions.getString("dose"),
-                            newPrescriptions.getInt("amount"));
+                            newPrescriptions.getInt("amount"), newPrescriptions.getInt("duration"));
                     prescriptions.put(prescription.getPrescriptionNumber(), prescription);
                 }
             }

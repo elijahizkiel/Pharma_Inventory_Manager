@@ -25,10 +25,11 @@ public class Prescription extends Medication {
         UUID id = UUID.randomUUID();
         this.prescriptionNumber = id.toString() + "DT" + dateTime;
     }
-    public Prescription(String prescriptionNumber, String nameOfMedication, int strength,String dosageForm,String dose,int amount ){
+    public Prescription(String prescriptionNumber, String nameOfMedication, int strength,String dosageForm,String dose,int amount, int duration ){
         super(nameOfMedication,strength,dosageForm);
         this.dose = dose;
         this.amount =amount;
+        this.duration = duration;
         this.prescriptionNumber = prescriptionNumber;
     }
     public String getNameOfMedication() {

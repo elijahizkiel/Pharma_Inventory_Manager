@@ -1,5 +1,6 @@
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -61,7 +62,12 @@ public class Dispenser implements DataBaseModifierAndAccessor{
         }
     }
 
-
+    public void dispense(Prescription prescription){
+        this.connect();
+        this.createTable();
+        insertCommand(prescription);
+        updateDispenseStatus(prescription);
+    }
     public void dispense(@NotNull ArrayList<Prescription> prescriptions){
         this.connect();
         this.createTable();
@@ -69,7 +75,24 @@ public class Dispenser implements DataBaseModifierAndAccessor{
             for (Prescription prescription : prescriptions) {
                 insertCommand(prescription);
                 updateDispenseStatus(prescription);
+                updateStockAmount(prescription);
             }
+        }
+    }
+
+    private void updateStockAmount(@NotNull Prescription prescription){
+        try{
+            String updateQuery = "UPDATE MedicationInStock" +
+                    "SET amount = amount - ?" +
+                    "WHERE nameOfMedication = ? AND strength = ? AND dosageForm = ;";
+            PreparedStatement query = connection.prepareStatement(updateQuery);
+            query.setInt(1,prescription.getAmount());
+            query.setString(2, prescription.getNameOfMedication());
+            query.setInt(3, prescription.getStrength());
+            query.setString(4, prescription.getDosageForm());
+            query.executeUpdate();
+        }catch (SQLException e){
+            JOptionPane.showMessageDialog(null,"Something went wrong"+e.getMessage());
         }
     }
 

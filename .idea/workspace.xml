@@ -5,22 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1738bcc0-6da0-4343-a5ea-0e6b391d00ce" name="Changes" comment="DataModifierAndAccessor changed into interface and added another classes">
-      <change beforePath="$PROJECT_DIR$/.InventoryManager.db" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DBMAtrialDispensed.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DBMAtrialPrescribed.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/InventoryManager.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/BackEndTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/BackEndTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DBMADispensed.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/DBMADispensed.pdf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DBMAPrescribed.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/DBMAPrescribed.pdf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Pharma-Inventory-Manager" beforeDir="false" afterPath="$PROJECT_DIR$/Pharma-Inventory-Manager" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Pharma-Inventory-Manager/DBMA.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/notify.ser" beforeDir="false" afterPath="$PROJECT_DIR$/notify.ser" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Dispenser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Dispenser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/DisposedMed.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/DisposedMed.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Disposer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Disposer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Medication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Medication.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Prescriber.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Prescriber.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/PrescriberGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/PrescriberGUI.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Prescription.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Prescription.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/PrescriptionNotifier.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/PrescriptionNotifier.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Reporter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Reporter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Registerer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Registerer.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -88,7 +85,7 @@
       <ReportDescription localRun="true" path="C:\Users\Y.S\AppData\Local\Temp\qodana_output1\qodana.sarif.json" reportGuid="cc0f20d3-4e29-4cbd-ba17-c4bac8fad1f4" reportId="PharmacyInventoryManager/qodana/2024-06-05" />
     </option>
   </component>
-  <component name="RunManager" selected="Application.BackEndTest">
+  <component name="RunManager" selected="Application.PrescriberGUI">
     <configuration name="BackEndTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="BackEndTest" />
       <module name="PharmacyInventoryManager" />
@@ -128,9 +125,9 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.BackEndTest" />
-        <item itemvalue="Application.Main" />
         <item itemvalue="Application.PrescriberGUI" />
+        <item itemvalue="Application.Main" />
+        <item itemvalue="Application.BackEndTest" />
         <item itemvalue="Application.TrialClass" />
         <item itemvalue="Application.Sample" />
       </list>
@@ -256,18 +253,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/PrescriptionNotifier.java</url>
-          <line>29</line>
+          <line>33</line>
           <option name="timeStamp" value="35" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/Main.java</url>
-          <line>97</line>
-          <option name="timeStamp" value="43" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/Main.java</url>
-          <line>312</line>
-          <properties class="Main.ReportsPanel" method="&lt;init&gt;">
+          <line>313</line>
+          <properties class="Main.ReportsPanel">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
           </properties>

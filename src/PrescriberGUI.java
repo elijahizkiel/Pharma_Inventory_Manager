@@ -81,10 +81,22 @@ public class PrescriberGUI extends JFrame {
 
     private void prescribe(ArrayList<PrescribePanel> panels){
         ArrayList<Prescription> prescriptions = getPrescriptions(panels);
+        ArrayList<Prescription> notPrescribedPrescriptions = new ArrayList<>();
         Prescriber prescriber = new Prescriber("jdbc:sqlite:..DBMAtrial.db");
         for(Prescription prescription: prescriptions){
             if(prescription.verifyPrescription())prescriber.prescribe(prescription);
+            else notPrescribedPrescriptions.add(prescription);
         }
+        String notification =" ";
+
+        if(!(notPrescribedPrescriptions.isEmpty())){
+            for(Prescription prescription : notPrescribedPrescriptions){
+                notification += prescription.toString()+"\n";
+            }
+            notification += " are not prescribed please write prescription on paper!";
+            JOptionPane.showMessageDialog(this,notification);
+        }
+
     }
     public static void main(String[] args) {
         new PrescriberGUI();

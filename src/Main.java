@@ -11,8 +11,10 @@ import java.util.concurrent.*;
 
 
 public class Main extends JFrame {
-    Reporter reporter = new Reporter("jdbc:sqlite:..DBMAtrial.db");
-    Registerer registerer = new Registerer("jdbc:sqlite:..DBMAtrial.db");
+    private String location ="jdbc:sqlite:..DBMAtrial.db";
+    Reporter reporter = new Reporter(location);
+    Registerer registerer = new Registerer(location);
+    Dispenser dispenser = new Dispenser(location);
     JTabbedPane mainPane;
     JPanel homePanel;
     static JPanel inventoryPanel;
@@ -199,7 +201,7 @@ public class Main extends JFrame {
         }
     }
 
-    protected static class NotificationPanel extends JPanel{
+    protected class NotificationPanel extends JPanel{
 
         JPanel newPrescriptionList;
         JPanel expiredMedList;
@@ -247,23 +249,22 @@ public class Main extends JFrame {
             setLayout(null);
         }
 
-        public void setPrescriptionsList() {
-            PrescriptionNotifier notifier;// = deserialize();
-            //if(notifier == null)
-            notifier = new PrescriptionNotifier("jdbc:sqlite:..DBMAtrial.db");
+        private void setPrescriptionsList() {
+            PrescriptionNotifier notifier = deserialize();
 
+            if(notifier == null)notifier = new PrescriptionNotifier(location);
+            else notifier.setLocation(location);
             System.out.println("going for  thread");
 
             ArrayList<Prescription> prescriptions = notifier.call();
             System.out.println("my prescriptions: \n" + prescriptions);
             if (!prescriptions.isEmpty()) {
                 prescriptionsList.addAll(prescriptions);
-            }
+            }else System.out.println("prescriptions list is empty");
             serialize(notifier);
         }
 
-
-        void addLabels(Prescription prescription){
+        private void addLabels(Prescription prescription){
             JLabel newLabel = new JLabel(prescription.toString());
             newLabel.setBackground(new Color(65, 142, 224));
             newLabel.setFont(new Font("Serif",Font.BOLD,17));
@@ -271,6 +272,17 @@ public class Main extends JFrame {
             newLabel.setMinimumSize(new Dimension(300,30));
             newLabel.setPreferredSize(new Dimension(400,35));
             newLabel.setBorder(BorderFactory.createLineBorder(new Color(190,200,200),8));
+            newLabel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    newLabel.setVisible(false);
+                    System.out.println("visibility set to false");
+                    newPrescriptionList.remove(newLabel);
+                    newPrescriptionList.revalidate();
+                    dispenser.dispense(prescription);
+                    prescriptionLabels.remove(newLabel);
+                }
+            });
 
             ++gridConstr.gridy;
 //            gridConstr.fill = GridBagConstraints.HORIZONTAL;
@@ -287,13 +299,7 @@ public class Main extends JFrame {
                 addLabels(prescription);
             }
         }
-        public void addAll(ArrayList<JLabel> comps, Container container){
-            if(!comps.isEmpty()){
-                for(JComponent comp : comps){
-                    container.add(comp);
-                }
-            }
-        }
+
     }
 
     protected class ReportsPanel extends JPanel{
@@ -425,7 +431,7 @@ public class Main extends JFrame {
             outObj.writeObject(object);
         }
         catch(IOException IOe){
-            System.out.println("from serialize method " + IOe.getMessage());
+            System.out.println( IOe.getMessage());
         }
     }
 
@@ -435,8 +441,10 @@ public class Main extends JFrame {
         ObjectInputStream inObj = new ObjectInputStream(fileIn))
         {
             notifier = (PrescriptionNotifier) inObj.readObject();
-        }catch(IOException|ClassNotFoundException CNF){
-            System.out.println("from deserialize Method" + CNF.getMessage());
+        }catch(ClassNotFoundException CNF){
+            System.out.println("from deserialize Method CNFexception" + CNF.getMessage());
+        }catch (IOException IOE){
+            System.out.println("from deserialize ioexception" +IOE.getMessage());
         }
         return notifier;
     }
